@@ -505,6 +505,20 @@ button {
   box-shadow: 0 0 0 4px rgba(48, 180, 90, 0.11);
 }
 
+.status-meta {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-version {
+  color: color-mix(in srgb, var(--muted) 82%, transparent);
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
 .card-number {
   color: color-mix(in srgb, var(--muted) 66%, transparent);
   font-size: 12px;
@@ -685,16 +699,21 @@ button {
     display: grid;
     grid-template-columns: minmax(280px, 0.82fr) minmax(390px, 1.18fr);
     gap: clamp(34px, 5vw, 58px);
-    align-items: start;
+    align-items: stretch;
   }
 
   .hero {
+    position: relative;
+    min-height: auto;
+    align-self: stretch;
+    align-content: start;
+    padding: 54px 0 56px;
+  }
+
+  .hero-copy-block {
     position: sticky;
-    top: calc(66px + env(safe-area-inset-top, 0px));
-    min-height: calc(100svh - 66px - env(safe-area-inset-top, 0px));
+    top: calc(66px + 54px + env(safe-area-inset-top, 0px));
     align-self: start;
-    align-content: center;
-    padding: 50px 0 56px;
   }
 
   .hero h1 {
@@ -771,16 +790,21 @@ button {
     display: grid;
     grid-template-columns: minmax(420px, 0.88fr) minmax(660px, 1.12fr);
     gap: clamp(52px, 5vw, 88px);
-    align-items: start;
+    align-items: stretch;
   }
 
   .hero {
+    position: relative;
+    min-height: auto;
+    align-self: stretch;
+    align-content: start;
+    padding: 70px 0;
+  }
+
+  .hero-copy-block {
     position: sticky;
-    top: calc(70px + env(safe-area-inset-top, 0px));
-    min-height: calc(100svh - 70px - env(safe-area-inset-top, 0px));
+    top: calc(70px + 70px + env(safe-area-inset-top, 0px));
     align-self: start;
-    align-content: center;
-    padding: 62px 0 70px;
   }
 
   .hero h1 {
@@ -869,13 +893,6 @@ button {
 }
 
 @media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
-  .tool-secondary .card-topline {
-    opacity: 0;
-    visibility: hidden;
-    transform: translate3d(0, -8px, 0);
-    transition: opacity 180ms ease, transform 220ms ease, visibility 0s linear 220ms;
-  }
-
   .tool-secondary .secondary-details {
     --secondary-detail-offset: 8px;
     max-height: 0;
@@ -899,13 +916,6 @@ button {
     pointer-events: auto;
   }
 
-  .tool-secondary:hover .card-topline,
-  .tool-secondary:focus-visible .card-topline {
-    opacity: var(--scroll-visibility);
-    visibility: visible;
-    transform: translate3d(0, 0, 0);
-    transition-delay: 0s;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,25 @@
+{
+  "name": "easonxavier.github.io",
+  "version": "1.3.0",
+  "description": "Static GitHub Pages tools portal.",
+  "private": true,
+  "scripts": {
+    "record:e2e": "playwright codegen --channel=msedge http://127.0.0.1:5173",
+    "test:e2e": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EasonXavier/EasonXavier.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/EasonXavier/EasonXavier.github.io/issues"
+  },
+  "homepage": "https://github.com/EasonXavier/EasonXavier.github.io#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}

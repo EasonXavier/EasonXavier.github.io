@@ -20,10 +20,16 @@
 EasonXavier.github.io/
 ├── index.html
 ├── assets/
-│   └── styles.css
+│   ├── portal.v1.3.0.css
+│   ├── portal.v1.3.0.js
+│   └── fonts/
+│       ├── portal-kai.v1.3.0.woff2
+│       └── portal-text.v1.3.0.woff2
 ├── .nojekyll
 └── README.md
 ```
+
+门户默认使用暗色主题，可通过页头按钮切换，并在浏览器中记住手动选择。版本和更新日期显示在页脚。
 
 ## 发布地址
 

@@ -1,0 +1,199 @@
+@font-face {
+  font-family: "PortalKai";
+  src: url("../Kaishu.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PortalText";
+  src: url("../LSVISTD.otf") format("opentype");
+  font-display: swap;
+}
+
+:root {
+  --portal-emphasis-font: "PortalKai", "STKaiti", "KaiTi", serif;
+  --portal-text-font: "PortalText", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+}
+
+body,
+.header-note,
+.eyebrow,
+.section-kicker,
+.section-heading > p,
+.status-dot,
+.status-pending,
+.card-number,
+.card-subtitle,
+.card-action,
+.site-footer {
+  font-family: var(--portal-text-font);
+}
+
+.brand,
+.hero h1,
+.section-heading h2,
+.card-content h3 {
+  font-family: var(--portal-emphasis-font);
+}
+
+.tool-card {
+  --scroll-visibility: 1;
+  --scroll-shift: 0px;
+}
+
+@media (min-width: 768px) {
+  .page-shell {
+    display: grid;
+    align-items: start;
+  }
+
+  .hero {
+    position: sticky;
+    align-self: start;
+    align-content: center;
+    grid-template-columns: 1fr;
+  }
+
+  .card-content,
+  .card-action {
+    opacity: var(--scroll-visibility);
+    transform: translate3d(0, var(--scroll-shift), 0);
+    will-change: opacity, transform;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .page-shell {
+    grid-template-columns: minmax(280px, 0.82fr) minmax(390px, 1.18fr);
+    gap: clamp(34px, 5vw, 58px);
+  }
+
+  .hero {
+    top: calc(68px + env(safe-area-inset-top, 0px));
+    min-height: calc(100svh - 68px - env(safe-area-inset-top, 0px));
+    padding: 54px 0 60px;
+  }
+
+  .hero h1 {
+    font-size: clamp(60px, 7.8vw, 82px);
+  }
+
+  .hero-copy {
+    font-size: 19px;
+  }
+
+  .hero-scene {
+    width: min(100%, 330px);
+    height: 280px;
+    margin: 28px 0 0;
+    opacity: 0.88;
+  }
+
+  .scene-disc {
+    width: 178px;
+    height: 178px;
+  }
+
+  .scene-panel {
+    width: 210px;
+    height: 138px;
+  }
+
+  .scene-capsule {
+    width: 62px;
+    height: 166px;
+  }
+
+  .tool-section {
+    min-width: 0;
+    padding: 84px 0 110px;
+  }
+
+  .tool-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .tool-card {
+    min-height: 470px;
+    padding: 28px;
+    border-radius: 34px;
+  }
+
+  .tool-card-placeholder {
+    min-height: 360px;
+  }
+
+  .card-visual {
+    height: 188px;
+  }
+
+  .abstract-icon {
+    margin: 34px 0;
+    transform: scale(1.18);
+  }
+}
+
+@media (min-width: 1200px) {
+  .page-shell {
+    grid-template-columns: minmax(420px, 0.82fr) minmax(660px, 1.18fr);
+    gap: clamp(60px, 6vw, 104px);
+  }
+
+  .hero {
+    top: calc(72px + env(safe-area-inset-top, 0px));
+    min-height: calc(100svh - 72px - env(safe-area-inset-top, 0px));
+    padding: 68px 0 74px;
+  }
+
+  .hero h1 {
+    font-size: clamp(76px, 6.25vw, 104px);
+  }
+
+  .hero-copy {
+    max-width: 560px;
+    font-size: 22px;
+  }
+
+  .hero-scene {
+    width: min(100%, 450px);
+    height: 360px;
+    margin: 34px 0 0;
+  }
+
+  .scene-disc {
+    width: 230px;
+    height: 230px;
+    right: 2%;
+  }
+
+  .scene-panel {
+    width: 280px;
+    height: 180px;
+  }
+
+  .scene-capsule {
+    width: 78px;
+    height: 215px;
+    right: 22%;
+  }
+
+  .scene-grid {
+    width: 170px;
+    height: 120px;
+  }
+
+  .tool-section {
+    min-width: 0;
+    padding: 104px 0 132px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-content,
+  .card-action {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+}

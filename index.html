@@ -4,58 +4,82 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#101012" media="(prefers-color-scheme: dark)" />
-  <meta name="description" content="一个集中访问已发布网页工具的简洁门户。" />
+  <meta name="theme-color" content="#0f0f11" media="(prefers-color-scheme: dark)" />
+  <meta name="application-version" content="1.1.0" />
+  <meta name="description" content="Eason 的网页工具门户，集中访问已发布的实用工具。" />
   <meta property="og:title" content="Eason's Tools" />
   <meta property="og:description" content="选择并打开需要使用的网页工具。" />
   <meta property="og:type" content="website" />
   <title>Eason's Tools</title>
-  <link rel="stylesheet" href="./assets/styles.css?v=1.0.0" />
+  <link rel="stylesheet" href="./assets/styles.v1.1.css" />
+  <script src="./assets/app.v1.1.js" defer></script>
 </head>
 <body>
-  <div class="ambient ambient-one" aria-hidden="true"></div>
-  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <div class="ambient ambient-one" data-parallax data-parallax-speed="-0.08" data-parallax-max="72" aria-hidden="true"></div>
+  <div class="ambient ambient-two" data-parallax data-parallax-speed="0.06" data-parallax-max="62" aria-hidden="true"></div>
+  <div class="ambient ambient-three" data-parallax data-parallax-speed="-0.04" data-parallax-max="44" aria-hidden="true"></div>
 
   <header class="site-header">
-    <a class="brand" href="./" aria-label="返回工具门户首页">
-      <span class="brand-mark" aria-hidden="true">
-        <span></span><span></span><span></span>
-      </span>
-      <span>Eason's Tools</span>
-    </a>
-    <span class="header-note">Web Utilities</span>
+    <div class="header-inner">
+      <a class="brand" href="./" aria-label="返回工具门户首页">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>Eason's Tools</span>
+      </a>
+      <span class="header-note">Web Utilities</span>
+    </div>
   </header>
 
-  <main>
+  <main class="page-shell">
     <section class="hero" aria-labelledby="page-title">
-      <p class="eyebrow">TOOLS, SIMPLIFIED</p>
-      <h1 id="page-title">选择一个工具，<br />立即开始。</h1>
-      <p class="hero-copy">所有工具均通过独立发布页面运行。无需安装，打开即可使用。</p>
+      <div class="hero-copy-block">
+        <p class="eyebrow">TOOLS, SIMPLIFIED</p>
+        <h1 id="page-title">选择一个工具，<br />立即开始。</h1>
+        <p class="hero-copy">这里集中展示 Eason 已发布的网页工具。无需安装，点击卡片即可进入独立工具页面。</p>
+      </div>
+
+      <div class="hero-scene" aria-hidden="true">
+        <div class="scene-layer scene-layer-back" data-parallax data-parallax-speed="0.09" data-parallax-max="58">
+          <span class="scene-disc"></span>
+        </div>
+        <div class="scene-layer scene-layer-middle" data-parallax data-parallax-speed="-0.14" data-parallax-max="78">
+          <span class="scene-panel"></span>
+        </div>
+        <div class="scene-layer scene-layer-front" data-parallax data-parallax-speed="0.18" data-parallax-max="92">
+          <span class="scene-capsule"></span>
+        </div>
+        <div class="scene-grid"></div>
+      </div>
     </section>
 
     <section class="tool-section" aria-labelledby="tool-heading">
       <div class="section-heading">
-        <h2 id="tool-heading">工具</h2>
+        <div>
+          <p class="section-kicker">PUBLISHED TOOLS</p>
+          <h2 id="tool-heading">工具</h2>
+        </div>
         <p>2 个可用 · 2 个预留入口</p>
       </div>
 
       <div class="tool-grid">
-        <a class="tool-card tool-card-active card-blue" href="/singledeviceDFTFA/" aria-label="打开动态二维码识别工具">
+        <a class="tool-card tool-card-active card-blue tool-primary" href="/singledeviceDFTFA/" aria-label="打开三角洲人脸工具">
           <div class="card-topline">
             <span class="status-dot"><i></i>可用</span>
             <span class="card-number">01</span>
           </div>
-          <div class="abstract-icon qr-icon" aria-hidden="true">
-            <span class="qr-cell qr-a"></span>
-            <span class="qr-cell qr-b"></span>
-            <span class="qr-cell qr-c"></span>
-            <span class="qr-cell qr-d"></span>
-            <span class="qr-cell qr-e"></span>
+          <div class="card-visual" data-parallax data-parallax-speed="-0.045" data-parallax-max="24" aria-hidden="true">
+            <div class="abstract-icon qr-icon">
+              <span class="qr-cell qr-a"></span>
+              <span class="qr-cell qr-b"></span>
+              <span class="qr-cell qr-c"></span>
+              <span class="qr-cell qr-d"></span>
+              <span class="qr-cell qr-e"></span>
+            </div>
           </div>
           <div class="card-content">
-            <p class="card-category">识别工具</p>
-            <h3>动态二维码识别</h3>
-            <p>使用手机摄像头或电脑屏幕共享，持续识别变化中的二维码。</p>
+            <h3>三角洲人脸工具</h3>
+            <p class="card-subtitle">单设备解人脸工具</p>
           </div>
           <div class="card-action">
             <span>打开工具</span>
@@ -63,20 +87,21 @@
           </div>
         </a>
 
-        <a class="tool-card tool-card-active card-orange" href="/What-to-eat-today/" aria-label="打开今天吃什么工具">
+        <a class="tool-card tool-card-active card-orange tool-secondary" href="/What-to-eat-today/" aria-label="打开今天想吃啥工具">
           <div class="card-topline">
             <span class="status-dot"><i></i>可用</span>
             <span class="card-number">02</span>
           </div>
-          <div class="abstract-icon food-icon" aria-hidden="true">
-            <span class="food-orbit"></span>
-            <span class="food-core"></span>
-            <span class="food-slice"></span>
+          <div class="card-visual" data-parallax data-parallax-speed="0.04" data-parallax-max="22" aria-hidden="true">
+            <div class="abstract-icon food-icon">
+              <span class="food-orbit"></span>
+              <span class="food-core"></span>
+              <span class="food-slice"></span>
+            </div>
           </div>
           <div class="card-content">
-            <p class="card-category">选择工具</p>
-            <h3>今天吃什么</h3>
-            <p>从大类到具体菜式进行两层随机选择，并避免近期重复。</p>
+            <h3>今天想吃啥</h3>
+            <p class="card-subtitle">如果你还不知道今天吃什么，不如让Eason的小工具来选吧。</p>
           </div>
           <div class="card-action">
             <span>打开工具</span>
@@ -84,18 +109,19 @@
           </div>
         </a>
 
-        <article class="tool-card tool-card-placeholder card-violet" aria-disabled="true">
+        <article class="tool-card tool-card-placeholder card-violet tool-placeholder-one" aria-disabled="true">
           <div class="card-topline">
             <span class="status-pending">预留</span>
             <span class="card-number">03</span>
           </div>
-          <div class="abstract-icon placeholder-icon placeholder-one" aria-hidden="true">
-            <span></span><span></span><span></span>
+          <div class="card-visual" data-parallax data-parallax-speed="-0.03" data-parallax-max="18" aria-hidden="true">
+            <div class="abstract-icon placeholder-icon placeholder-one">
+              <span></span><span></span><span></span>
+            </div>
           </div>
           <div class="card-content">
-            <p class="card-category">未来工具</p>
-            <h3>新工具入口</h3>
-            <p>此位置已预留，可在下一项工具发布后直接启用。</p>
+            <h3>新工具</h3>
+            <p class="card-subtitle">未来工具入口</p>
           </div>
           <div class="card-action muted-action">
             <span>即将上线</span>
@@ -103,18 +129,19 @@
           </div>
         </article>
 
-        <article class="tool-card tool-card-placeholder card-green" aria-disabled="true">
+        <article class="tool-card tool-card-placeholder card-green tool-placeholder-two" aria-disabled="true">
           <div class="card-topline">
             <span class="status-pending">预留</span>
             <span class="card-number">04</span>
           </div>
-          <div class="abstract-icon placeholder-icon placeholder-two" aria-hidden="true">
-            <span></span><span></span><span></span>
+          <div class="card-visual" data-parallax data-parallax-speed="0.028" data-parallax-max="18" aria-hidden="true">
+            <div class="abstract-icon placeholder-icon placeholder-two">
+              <span></span><span></span><span></span>
+            </div>
           </div>
           <div class="card-content">
-            <p class="card-category">未来工具</p>
-            <h3>新工具入口</h3>
-            <p>此位置已预留，可在下一项工具发布后直接启用。</p>
+            <h3>新工具</h3>
+            <p class="card-subtitle">未来工具入口</p>
           </div>
           <div class="card-action muted-action">
             <span>即将上线</span>
@@ -126,8 +153,10 @@
   </main>
 
   <footer class="site-footer">
-    <p>Designed for simple access.</p>
-    <p>© 2026 Eason Xavier</p>
+    <div class="footer-inner">
+      <p>Designed for simple access.</p>
+      <p>© 2026 Eason Xavier</p>
+    </div>
   </footer>
 </body>
 </html>

@@ -198,7 +198,32 @@ button {
 .header-actions {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.release-meta-header {
+  color: var(--muted);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 519px) {
+  .header-actions {
+    position: relative;
+    width: 34px;
+    height: 34px;
+  }
+
+  .release-meta-header {
+    position: absolute;
+    top: 50%;
+    right: 42px;
+    transform: translateY(-50%);
+  }
 }
 
 .header-note {
@@ -586,11 +611,13 @@ button {
   white-space: nowrap;
 }
 
-.tool-secondary .card-subtitle {
-  overflow: hidden;
-  font-size: clamp(12px, 3.7vw, 14px);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.secondary-details {
+  min-width: 0;
+}
+
+.tool-secondary .secondary-details .card-subtitle {
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .card-action {
@@ -641,10 +668,6 @@ button {
 
 .footer-inner p {
   margin: 0;
-}
-
-.release-meta {
-  color: var(--text);
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
@@ -845,6 +868,46 @@ button {
   }
 }
 
+@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
+  .tool-secondary .card-topline {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(0, -8px, 0);
+    transition: opacity 180ms ease, transform 220ms ease, visibility 0s linear 220ms;
+  }
+
+  .tool-secondary .secondary-details {
+    --secondary-detail-offset: 8px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, calc(var(--scroll-shift) + var(--secondary-detail-offset)), 0);
+    transition: max-height 240ms ease, opacity 180ms ease, transform 220ms ease;
+  }
+
+  .tool-secondary .secondary-details .card-action {
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+
+  .tool-secondary:hover .secondary-details,
+  .tool-secondary:focus-visible .secondary-details {
+    --secondary-detail-offset: 0px;
+    max-height: 136px;
+    opacity: var(--scroll-visibility);
+    pointer-events: auto;
+  }
+
+  .tool-secondary:hover .card-topline,
+  .tool-secondary:focus-visible .card-topline {
+    opacity: var(--scroll-visibility);
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+    transition-delay: 0s;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -858,7 +921,8 @@ button {
 
   .tool-card-active,
   .arrow,
-  .theme-toggle {
+  .theme-toggle,
+  .tool-secondary .secondary-details {
     transition: none;
   }
 

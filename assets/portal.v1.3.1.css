@@ -775,6 +775,26 @@ button {
   }
 }
 
+@media (min-width: 1000px) and (max-width: 1199px) and (orientation: landscape) {
+  .tool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .tool-card,
+  .tool-card-placeholder {
+    min-height: 380px;
+    padding: 20px;
+    border-radius: 28px;
+  }
+
+  .card-visual { height: 144px; }
+  .abstract-icon { margin: 26px 0 24px; transform: scale(1); }
+  .card-content h3 { font-size: clamp(25px, 2.7vw, 29px); }
+  .tool-secondary .card-content h3 { font-size: clamp(24px, 2.5vw, 28px); }
+  .card-subtitle { font-size: 13px; }
+}
+
 @media (min-width: 1200px) {
   .header-inner,
   .page-shell,

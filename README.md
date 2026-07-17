@@ -20,8 +20,8 @@
 EasonXavier.github.io/
 ├── index.html
 ├── assets/
-│   ├── portal.v1.3.0.css
-│   ├── portal.v1.3.0.js
+│   ├── portal.v1.3.1.css
+│   ├── portal.v1.3.1.js
 │   └── fonts/
 │       ├── portal-kai.v1.3.0.woff2
 │       └── portal-text.v1.3.0.woff2

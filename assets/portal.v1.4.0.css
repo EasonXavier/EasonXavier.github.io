@@ -461,6 +461,45 @@ button {
 .card-violet::after { background: #bf5af2; }
 .card-green::after { background: #30d158; }
 
+.spectrum-icon {
+  overflow: hidden;
+  background: linear-gradient(145deg, #6857e5, #9d71f4);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.spectrum-axis {
+  position: absolute;
+  right: 17px;
+  bottom: 17px;
+  left: 17px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.spectrum-bar {
+  position: absolute;
+  bottom: 19px;
+  width: 13px;
+  border-radius: 7px 7px 2px 2px;
+  background: #ffffff;
+}
+
+.spectrum-a { left: 20px; height: 31px; opacity: 0.72; }
+.spectrum-b { left: 47px; height: 58px; }
+.spectrum-c { right: 20px; height: 43px; opacity: 0.86; }
+
+.spectrum-glow {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  top: -13px;
+  right: -12px;
+  border-radius: 50%;
+  background: rgba(143, 255, 225, 0.66);
+  filter: blur(5px);
+}
+
 .tool-card-active {
   transition: transform 220ms cubic-bezier(.2, .8, .2, 1), box-shadow 220ms ease, border-color 220ms ease;
 }
@@ -868,7 +907,7 @@ button {
 
   .tool-primary { grid-column: span 7; }
   .tool-secondary { grid-column: span 5; }
-  .tool-placeholder-one,
+  .tool-dataspectrum,
   .tool-placeholder-two { grid-column: span 6; }
 
   .tool-card {
@@ -880,7 +919,7 @@ button {
   .card-visual { height: 204px; }
   .tool-primary .abstract-icon { transform: scale(1.34); }
   .tool-secondary .abstract-icon { transform: scale(1.2); }
-  .tool-placeholder-one .abstract-icon,
+  .tool-dataspectrum .abstract-icon,
   .tool-placeholder-two .abstract-icon { transform: scale(1.12); }
   .abstract-icon { margin: 38px 0 34px; }
   .tool-primary .card-content h3 { font-size: 38px; }

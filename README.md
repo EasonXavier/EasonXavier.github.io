@@ -11,7 +11,10 @@
 2. [今天吃什么](https://easonxavier.github.io/What-to-eat-today/)
    - 大类与具体菜式两层随机选择
    - 大类 24 小时内不重复
-3. 预留工具入口
+3. [DataSpectrum 数据棱镜](https://easonx.me/DataSpectrum/)
+   - 根据公开 KD 数据估算绝密对局场次区间
+   - 按游戏一位小数 KD 的显示区间计算下界
+   - 全程在浏览器本地计算
 4. 预留工具入口
 
 ## 文件结构
@@ -20,8 +23,8 @@
 EasonXavier.github.io/
 ├── index.html
 ├── assets/
-│   ├── portal.v1.3.1.css
-│   ├── portal.v1.3.1.js
+│   ├── portal.v1.4.0.css
+│   ├── portal.v1.4.0.js
 │   └── fonts/
 │       ├── portal-kai.v1.3.0.woff2
 │       └── portal-text.v1.3.0.woff2

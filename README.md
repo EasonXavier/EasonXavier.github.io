@@ -15,7 +15,9 @@
    - 根据公开 KD 数据估算绝密对局场次区间
    - 按游戏一位小数 KD 的显示区间计算下界
    - 全程在浏览器本地计算
-4. 预留工具入口
+4. [朗世乐 UI 试验场](https://easonx.me/lancelot-gamepal-ui-playground/)
+   - 移动 UI 与微信 WebView 性能试验场
+   - 当前处于开发中，用于线上测试
 
 ## 文件结构
 
@@ -23,8 +25,8 @@
 EasonXavier.github.io/
 ├── index.html
 ├── assets/
-│   ├── portal.v1.4.0.css
-│   ├── portal.v1.4.0.js
+│   ├── portal.v1.5.0.css
+│   ├── portal.v1.5.0.js
 │   └── fonts/
 │       ├── portal-kai.v1.3.0.woff2
 │       └── portal-text.v1.3.0.woff2

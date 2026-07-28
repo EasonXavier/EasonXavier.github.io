@@ -3,13 +3,17 @@
 ## Operation
 
 - Operation ID: `repo-rename-2026-07-29-portal-cutover`
-- Status: `implementation verified; deployment verification pending`
+- Status: `completed`
 - Portal repository: `EasonXavier/EasonXavier.github.io`
 - Portal repository ID: `1302800358`
 - Branch and Pages source: `main` / repository root
 - Baseline commit: `0a3bccf9792f04549559463035a6dc39f1639ec3`
 - Prepared at: `2026-07-29T07:49:09+08:00` (`2026-07-28T23:49:09Z`)
 - Portal release: `1.5.1` (`2026-07-29`)
+- Portal implementation commit:
+  `4a1cebe6075daa5d0f82d9bfbb2bcf16283ff04e`
+- Deployment verified at: `2026-07-29T07:55:45+08:00`
+  (`2026-07-28T23:55:45Z`)
 
 ## Completed repository renames
 
@@ -52,8 +56,16 @@ old GitHub Pages paths.
   still reported `v1.5.0 · 2026-07-28`.
 - GREEN: JavaScript syntax validation passed and `npm run test:e2e` passed all
   11 tests after implementation.
-- Live deployment evidence will be appended before the operation is marked
-  complete.
+- Live: `https://easonx.me/` returned HTTP 200 and reported Portal `1.5.1`
+  with all three canonical routes.
+- Live: the three canonical application URLs and both versioned Portal assets
+  returned HTTP 200.
+
+## Result
+
+`PASS` — the three repository renames, their Pages deployments, and the Portal
+cutover were verified. The annotated release tag `v1.5.1` identifies the final
+Portal audit commit.
 
 ## Rollback procedure
 

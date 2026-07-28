@@ -4,14 +4,14 @@
 
 ## 当前入口
 
-1. [动态二维码识别](https://easonxavier.github.io/singledeviceDFTFA/)
+1. [动态二维码识别](https://easonx.me/single-device-dftfa/)
    - 手机摄像头扫码
    - PC 屏幕共享识别
    - 动态二维码 Index 与复制状态提示
-2. [今天吃什么](https://easonxavier.github.io/What-to-eat-today/)
+2. [今天吃什么](https://easonx.me/what-to-eat-today/)
    - 大类与具体菜式两层随机选择
    - 大类 24 小时内不重复
-3. [DataSpectrum 数据棱镜](https://easonx.me/DataSpectrum/)
+3. [DataSpectrum 数据棱镜](https://easonx.me/data-spectrum/)
    - 根据公开 KD 数据估算绝密对局场次区间
    - 按游戏一位小数 KD 的显示区间计算下界
    - 全程在浏览器本地计算
@@ -25,8 +25,8 @@
 EasonXavier.github.io/
 ├── index.html
 ├── assets/
-│   ├── portal.v1.5.0.css
-│   ├── portal.v1.5.0.js
+│   ├── portal.v1.5.1.css
+│   ├── portal.v1.5.1.js
 │   └── fonts/
 │       ├── portal-kai.v1.3.0.woff2
 │       └── portal-text.v1.3.0.woff2
@@ -39,10 +39,10 @@ EasonXavier.github.io/
 ## 发布地址
 
 ```text
-https://easonxavier.github.io/
+https://easonx.me/
 ```
 
-门户卡片使用项目站点的根路径链接。以后为用户站点绑定自定义域名后，工具路径可以继续保持不变。
+门户卡片使用自定义域名下的项目站点根路径链接；路径与对应的规范化仓库名称保持一致。
 
 ## 版本规则
 

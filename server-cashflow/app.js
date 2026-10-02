@@ -11,14 +11,25 @@ let clients=[{id:1,name:'下游 A',p:110,q:6,x:35,deposit:2,tail:4,guarantee:192
 const upstreamKeys=['p','q','x','y','upDeposit','upTail','gNode'];
 function state(){return {...Object.fromEntries(upstreamKeys.map(k=>[k,$(k).value===''?NaN:Number($(k).value)])),allocation:$('allocation').value,intermediaries:intermediaries.map(b=>({...b})),clients:clients.map(c=>({...c}))};}
 function adjustButtons(scope,id,step,label){return `<span class="adjust-buttons"><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="-${step}" aria-label="${esc(label)}减少 ${step} 万元">−${step}</button><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="${step}" aria-label="${esc(label)}增加 ${step} 万元">+${step}</button></span>`;}
-function field(c,key,label,unit='',min=0,max=null,step='any'){return `<label>${esc(label)}<span class="${key==='p'?'price-control':''}"><span class="input-unit"><input aria-label="${esc(c.name+' '+label)}" data-client="${c.id}" data-key="${key}" type="number" min="${min}" ${max===null?'':`max="${max}"`} step="${step}" value="${Number.isFinite(c[key])?c[key]:''}">${unit?`<span>${unit}</span>`:''}</span>${key==='p'?adjustButtons('client',c.id,5,c.name+' 销售单价'):''}</span></label>`;}
+function parameterButtons(scope,id,key,label){const quantity=key==='q';return `<span class="adjust-buttons">${(quantity?[.5,2]:[-.1,.1]).map(n=>`<button type="button" data-adjust="${scope}" data-id="${id}" data-adjust-key="${key}" ${quantity?`data-factor="${n}"`:`data-delta="${n}"`} aria-label="${esc(label)}${quantity?(n===2?'乘以 2':'除以 2'):(n>0?'增加 0.1 个百分点':'减少 0.1 个百分点')}"${quantity&&n===.5?' title="数量须为偶数，除以 2 后至少为 1 台"':''}>${quantity?(n===2?'×2':'÷2'):(n>0?'+0.1':'−0.1')}</button>`).join('')}</span>`;}
+function adjustment(button){
+ const scope=button.dataset.adjust,id=Number(button.dataset.id),key=button.dataset.adjustKey||(scope==='broker'?'rate':'p');
+ const item=scope==='client'?clients.find(c=>c.id===id):scope==='broker'?intermediaries.find(b=>b.id===id):null;
+ const raw=scope==='procurement'?$(key).value:item?.[key],current=raw===''?NaN:Number(raw);
+ let next=button.dataset.factor?current*Number(button.dataset.factor):current+Number(button.dataset.delta);
+ next=key==='x'?Math.round(next*10)/10:TradeModel.money(next);
+ const min=key==='p'?.000001:key==='q'?1:0,max=key==='x'?100:key==='q'?1000000:1e9;
+ const valid=Number.isFinite(current)&&Number.isFinite(next)&&next>=min&&next<=max&&(key!=='q'||(Number.isInteger(current)&&Number.isInteger(next)));
+ return {scope,key,item,next,valid,id};
+}
+function field(c,key,label,unit='',min=0,max=null,step='any'){return `<label>${esc(label)}<span class="${['p','q','x'].includes(key)?'price-control':''}"><span class="input-unit"><input aria-label="${esc(c.name+' '+label)}" data-client="${c.id}" data-key="${key}" type="number" min="${min}" ${max===null?'':`max="${max}"`} step="${step}" value="${Number.isFinite(c[key])?c[key]:''}">${unit?`<span>${unit}</span>`:''}</span>${key==='p'?adjustButtons('client',c.id,5,c.name+' 销售单价'):['q','x'].includes(key)?parameterButtons('client',c.id,key,c.name+' '+label):''}</span></label>`;}
 function renderBrokers(){
  $('intermediaries').innerHTML=intermediaries.map((b,i)=>`<article class="broker"><div class="client-head"><input class="client-name" aria-label="居间方 ${i+1} 名称" data-broker="${b.id}" data-key="name" maxlength="40" value="${esc(b.name)}"><button class="remove" data-remove-broker="${b.id}" aria-label="删除${esc(b.name)}">移除</button></div><label>每台返点<span class="price-control"><span class="input-unit"><input type="number" aria-label="${esc(b.name)} 每台返点" data-broker="${b.id}" data-key="rate" value="${Number.isFinite(b.rate)?b.rate:''}" min="0" max="1000000000" step="any"><span>万元/台</span></span>${adjustButtons('broker',b.id,1,b.name+' 每台返点')}</span></label><div class="summary-lines" id="broker-summary-${b.id}"></div></article>`).join('')||'<p class="hint">未设置居间方，返点为 0。</p>';
  $('add-broker').disabled=intermediaries.length>=20;
 }
-function syncSteppers(){document.querySelectorAll('[data-adjust]').forEach(button=>{const type=button.dataset.adjust,id=Number(button.dataset.id),value=type==='procurement'?Number($('p').value):type==='client'?clients.find(c=>c.id===id)?.p:intermediaries.find(b=>b.id===id)?.rate;const next=Number(value)+Number(button.dataset.delta);button.disabled=!Number.isFinite(value)||next<(type==='broker'?0:.000001)||next>1e9;});}
+function syncSteppers(){document.querySelectorAll('[data-adjust]').forEach(button=>{button.disabled=!adjustment(button).valid;});}
 function renderClients(){
- $('clients').innerHTML=clients.length?clients.map((c,i)=>`<article class="client" data-id="${c.id}"><div class="client-head"><div class="client-identity"><span class="client-badge">${String(i+1).padStart(2,'0')}</span><input class="client-name" aria-label="客户 ${i+1} 名称" data-client="${c.id}" data-key="name" maxlength="40" value="${esc(c.name)}"></div><button class="remove" data-remove="${c.id}" aria-label="删除${esc(c.name)}">移除</button></div><div class="client-fields">${field(c,'p','销售单价 Pd','',0.000001)}${field(c,'q','数量 Qd','台',1,1000000,1)}${field(c,'x','预付款 xd','%',0,100)}${field(c,'deposit','收预付款节点','',1,999,1)}${field(c,'tail','收尾款节点','',1,999,1)}</div><div class="client-meta" id="client-meta-${c.id}"></div></article>`).join(''):'<div class="empty">暂无下游客户，点击“添加客户”开始分配销售数量。</div>';
+ $('clients').innerHTML=clients.length?clients.map((c,i)=>`<article class="client" data-id="${c.id}"><div class="client-head"><div class="client-identity"><span class="client-badge">${String(i+1).padStart(2,'0')}</span><input class="client-name" aria-label="客户 ${i+1} 名称" data-client="${c.id}" data-key="name" maxlength="40" value="${esc(c.name)}"></div><button class="remove" data-remove="${c.id}" aria-label="删除${esc(c.name)}">移除</button></div><div class="client-fields">${field(c,'p','销售单价 Pd','',0.000001)}${field(c,'q','数量 Qd','台',1,1000000,1)}${field(c,'x','预付款 xd','%',0,100,.1)}${field(c,'deposit','收预付款节点','',1,999,1)}${field(c,'tail','收尾款节点','',1,999,1)}</div><div class="client-meta" id="client-meta-${c.id}"></div></article>`).join(''):'<div class="empty">暂无下游客户，点击“添加客户”开始分配销售数量。</div>';
  renderGuaranteeInputs();
 }
 function renderGuaranteeInputs(){
@@ -60,7 +71,7 @@ function render(){
  $('upstream-summary').innerHTML=line('采购总额',fmt(r.cost))+line('应付预付款',fmt(r.upfront))+line('应付尾款',fmt(TradeModel.money(r.cost-r.upfront)));
  $('guarantee-summary').innerHTML=line('保函总额度',fmt(r.guarantee))+line('已分配额度',fmt(r.allocated))+line('保留额度',fmt(r.unallocated));
  $('quantity-summary').textContent=`已分配 ${r.soldQ} / ${s.q} 台 · ${clients.length} 位客户`;
- r.clients.forEach(c=>{$('client-meta-'+c.id).innerHTML=`<span>销售额 <strong>${fmt(c.sales)}</strong></span><span>预付款 <strong>${fmt(c.depositCash)}</strong></span><span>首期返点 <strong>${fmt(c.depositRebate)}</strong></span>`;});
+ r.clients.forEach(c=>{$('client-meta-'+c.id).innerHTML=`<span>销售额 <strong>${fmt(c.sales)}</strong></span><span>预付款 <strong>${fmt(c.depositCash)}</strong></span><span>首期返点 <strong>${fmt(c.depositRebate)}</strong></span><span class="guarantee-result">分配保函 <strong>${fmt(c.g)} 万元</strong></span><span class="guarantee-result" title="分配保函金额 ÷ 本客户销售合同金额">实际保函比例 <strong>${pct(c.guaranteeSalesRate)}</strong></span>`;});
  $('cash-summary').innerHTML=`<span>预付款阶段合计净流入<strong class="${color(r.depositNet)}">${signed(r.depositNet)}</strong></span><span>最低累计余额<strong class="${color(r.minBalance)}">${fmt(r.minBalance)}</strong></span><span>单位：万元</span>`;
  drawChart(r);
  $('timeline').querySelector('tbody').innerHTML=r.events.map(e=>`<tr class="${e.balance<0?'zero-row':''}"><td><strong>${esc(e.label)}</strong><small>节点 ${e.node}${e.isGuarantee?' · 不发生现金收付':''}</small></td><td class="${color(e.inflow)}">${fmt(e.inflow)}</td><td>${fmt(e.upstream)}</td><td>${fmt(e.rebate)}</td><td class="${color(e.net)}">${signed(e.net)}</td><td class="${color(e.balance)}">${fmt(e.balance)}</td><td class="${color(e.realized)}">${fmt(e.realized)}</td></tr>`).join('');
@@ -97,11 +108,8 @@ $('add-broker').addEventListener('click',()=>{if(intermediaries.length>=20)retur
 document.addEventListener('click',e=>{
  const remove=e.target.closest('[data-remove-broker]');if(remove){intermediaries=intermediaries.filter(b=>b.id!==Number(remove.dataset.removeBroker));renderBrokers();render();}
  const button=e.target.closest('[data-adjust]');if(!button)return;
- const scope=button.dataset.adjust,id=Number(button.dataset.id),delta=Number(button.dataset.delta);
- const item=scope==='client'?clients.find(c=>c.id===id):scope==='broker'?intermediaries.find(b=>b.id===id):null;
- const current=scope==='procurement'?Number($('p').value):item?.[scope==='broker'?'rate':'p'];
- if(!Number.isFinite(current))return;const next=TradeModel.money(current+delta);if(next<(scope==='broker'?0:.000001)||next>1e9)return;
- if(scope==='procurement')$('p').value=next;
- else {item[scope==='broker'?'rate':'p']=next;const input=document.querySelector(scope==='broker'?`[data-broker="${id}"][data-key="rate"]`:`[data-client="${id}"][data-key="p"]`);if(input)input.value=next;}
+ const {scope,key,item,next,valid,id}=adjustment(button);if(!valid)return;
+ if(scope==='procurement')$(key).value=next;
+ else {item[key]=next;const input=document.querySelector(scope==='broker'?`[data-broker="${id}"][data-key="${key}"]`:`[data-client="${id}"][data-key="${key}"]`);if(input)input.value=next;}
  render();
 });

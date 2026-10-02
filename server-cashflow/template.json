@@ -3,41 +3,29 @@
   "currency": "CNY",
   "amountUnit": "CNY_10K",
   "procurement": {
-    "unitPrice": 100,
-    "quantity": 10,
+    "unitPrice": 1390,
+    "quantity": 128,
     "advanceRate": 30,
-    "guaranteeRate": 32,
+    "guaranteeRate": 35,
     "guaranteeNode": 1,
     "advanceNode": 3,
     "balanceNode": 5
   },
   "guaranteeAllocation": "quantity",
-  "customers": [
-    {
-      "name": "下游 A",
-      "unitPrice": 110,
-      "quantity": 6,
-      "advanceRate": 35,
-      "advanceNode": 2,
-      "balanceNode": 4
-    },
-    {
-      "name": "下游 B",
-      "unitPrice": 112,
-      "quantity": 4,
-      "advanceRate": 35,
-      "advanceNode": 2,
-      "balanceNode": 4
-    }
-  ],
   "intermediaries": [
     {
       "name": "居间 A",
-      "rebatePerUnit": 1
-    },
+      "rebatePerUnit": 85
+    }
+  ],
+  "customers": [
     {
-      "name": "居间 B",
-      "rebatePerUnit": 0
+      "name": "下游 A",
+      "unitPrice": 1500,
+      "quantity": 128,
+      "advanceRate": 29.4,
+      "advanceNode": 2,
+      "balanceNode": 4
     }
   ]
 }

@@ -5,9 +5,9 @@ const fmt=n=>Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFr
 const pct=n=>n===null?'—':n.toLocaleString('zh-CN',{maximumFractionDigits:2})+'%';
 const signed=n=>(n>0?'+':'')+fmt(n);
 const color=n=>n<0?'negative':n>0?'positive':'';
-let nextId=3,nextBrokerId=3,result=null;
-let intermediaries=[{id:1,name:'居间 A',rate:1},{id:2,name:'居间 B',rate:0}];
-let clients=[{id:1,name:'下游 A',p:110,q:6,x:35,deposit:2,tail:4,guarantee:192},{id:2,name:'下游 B',p:112,q:4,x:35,deposit:2,tail:4,guarantee:128}];
+let nextId=2,nextBrokerId=2,result=null;
+let intermediaries=[{id:1,name:'居间 A',rate:85}];
+let clients=[{id:1,name:'下游 A',p:1500,q:128,x:29.4,deposit:2,tail:4,guarantee:62272}];
 const upstreamKeys=['p','q','x','y','upDeposit','upTail','gNode'];
 function state(){return {...Object.fromEntries(upstreamKeys.map(k=>[k,$(k).value===''?NaN:Number($(k).value)])),allocation:$('allocation').value,intermediaries:intermediaries.map(b=>({...b})),clients:clients.map(c=>({...c}))};}
 function adjustButtons(scope,id,step,label){return `<span class="adjust-buttons"><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="-${step}" aria-label="${esc(label)}减少 ${step} 万元">−${step}</button><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="${step}" aria-label="${esc(label)}增加 ${step} 万元">+${step}</button></span>`;}

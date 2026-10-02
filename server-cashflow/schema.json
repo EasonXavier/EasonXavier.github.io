@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "服务器交易数据 v1.0",
+  "description": "CNY_10K 表示万元；比例以百分数填写，如 30 表示 30%。同节点先交付保函，再付上游，再收下游并支付返点。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "currency",
+    "amountUnit",
+    "procurement",
+    "guaranteeAllocation",
+    "customers"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "currency": {
+      "const": "CNY"
+    },
+    "amountUnit": {
+      "const": "CNY_10K"
+    },
+    "procurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unitPrice",
+        "quantity",
+        "advanceRate",
+        "guaranteeRate",
+        "guaranteeNode",
+        "advanceNode",
+        "balanceNode"
+      ],
+      "properties": {
+        "unitPrice": {
+          "type": "number",
+          "minimum": 1e-06,
+          "maximum": 1000000000.0
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "advanceRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "guaranteeRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "guaranteeNode": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "advanceNode": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "balanceNode": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        }
+      }
+    },
+    "guaranteeAllocation": {
+      "enum": [
+        "quantity",
+        "manual"
+      ]
+    },
+    "customers": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "unitPrice",
+          "quantity",
+          "advanceRate",
+          "rebateTotal",
+          "advanceNode",
+          "balanceNode"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "pattern": "\\S"
+          },
+          "unitPrice": {
+            "type": "number",
+            "minimum": 1e-06,
+            "maximum": 1000000000.0
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "advanceRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "rebateTotal": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000.0
+          },
+          "advanceNode": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 999
+          },
+          "balanceNode": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 999
+          },
+          "guaranteeAmount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000.0
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "guaranteeAllocation": {
+            "const": "manual"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "customers": {
+            "items": {
+              "required": [
+                "guaranteeAmount"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -18,17 +18,21 @@ function line(a,b){return `<div><span>${a}</span><strong>${b}</strong></div>`;}
 function clearResults(errors){
  $('metrics').innerHTML=metric('方案状态','待修正输入','修正后自动重新计算',true,true)+metric('已售合同利润','—','万元')+metric('期末现金结余','—','万元')+metric('最大垫资缺口','—','不允许垫资');
  $('alerts').innerHTML=`<div class="alert danger" role="alert"><ul>${errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`;
- ['chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';result=null;if($('funding-dialog').open)$('funding-dialog').close();lastDialogKey='';
+ ['event-detail','chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';result=null;if($('funding-dialog').open)$('funding-dialog').close();lastDialogKey='';
 }
+let chartMode='balance',selectedEvent=-1,pendingImport=null;
 function drawChart(r){
- const values=[0,...r.events.map(e=>e.balance)],width=960,height=210,padL=75,padR=20,padT=20,padB=33;
- let lo=Math.min(...values),hi=Math.max(...values);if(lo===hi){lo=-1;hi=1;}else{const span=hi-lo;hi+=span*.1;lo-=span*.1;}
- const x=i=>padL+(width-padL-padR)*i/Math.max(1,values.length-1),y=v=>padT+(hi-v)/(hi-lo)*(height-padT-padB);
- const points=values.map((v,i)=>`${x(i)},${y(v)}`).join(' '),zero=y(0),path=`M ${x(0)} ${zero} L ${points.replace(/ /g,' L ')} L ${x(values.length-1)} ${zero} Z`;
- let grid='';for(let i=0;i<4;i++){let v=hi-(hi-lo)*i/3,yy=y(v);grid+=`<line x1="${padL}" y1="${yy}" x2="${width-padR}" y2="${yy}" stroke="#e9eff3"/><text x="${padL-12}" y="${yy+4}" text-anchor="end" fill="#8b9ba6" font-size="12">${Math.abs(v)>=10000?(v/10000).toFixed(1)+'万':v.toLocaleString('zh-CN',{maximumFractionDigits:0})}</text>`;}
- const ticks=values.map((v,i)=>{let e=r.events[i-1],label=i===0?'起点':`N${e.node}`,show=values.length<=12||i===0||i===values.length-1||i%Math.ceil(values.length/9)===0;return `<circle cx="${x(i)}" cy="${y(v)}" r="${v<0?4:3}" fill="${v<0?'#c24b61':'#20866e'}"><title>${esc(e?e.label:'起点')}：${fmt(v)} 万元</title></circle>${show?`<text x="${x(i)}" y="${height-5}" text-anchor="middle" fill="#8b9ba6" font-size="12">${label}</text>`:''}`;}).join('');
- $('chart').innerHTML=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="累计现金余额走势，最低 ${fmt(r.minBalance)} 万元，期末 ${fmt(r.finalCash)} 万元"><defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#238b73" stop-opacity=".13"/><stop offset="100%" stop-color="#238b73" stop-opacity=".015"/></linearGradient></defs>${grid}<line x1="${padL}" y1="${zero}" x2="${width-padR}" y2="${zero}" stroke="#a7b8c3" stroke-dasharray="4 4"/><path d="${path}" fill="url(#fill)"/><polyline points="${points}" fill="none" stroke="#238b73" stroke-width="2.5" stroke-linejoin="round"/>${ticks}</svg>`;
+ if(selectedEvent>=r.events.length)selectedEvent=-1;
+ $('chart').innerHTML=TradeCharts.render(r,chartMode,selectedEvent);
+ $('chart-legend').innerHTML=chartMode==='balance'?'<span><i class="legend-dot balance"></i>余额</span><span><i class="legend-dot deficit"></i>资金缺口</span>':'<span><i class="legend-dot balance"></i>收款</span><span><i class="legend-dot upstream"></i>付上游</span><span><i class="legend-dot rebate"></i>返点</span>';
+ document.querySelectorAll('[data-chart-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chartMode===chartMode)));
+ showEventDetail(r);
 }
+function showEventDetail(r){
+ let e=r.events[selectedEvent];
+ $('event-detail').innerHTML=e?`<div><strong>节点 ${e.node} · ${esc(e.label)}</strong><span>第 ${selectedEvent+1} 笔事项</span></div><dl><div><dt>收款</dt><dd>${fmt(e.inflow)}</dd></div><div><dt>付上游</dt><dd>${fmt(e.upstream)}</dd></div><div><dt>返点</dt><dd>${fmt(e.rebate)}</dd></div><div><dt>净现金流</dt><dd class="${color(e.net)}">${signed(e.net)}</dd></div><div><dt>累计余额</dt><dd class="${color(e.balance)}">${fmt(e.balance)}</dd></div></dl>`:'<p>点击图中节点查看收支明细。相同节点按表内顺序结算，虚线表示零余额。</p>';
+}
+
 function render(){
  const s=state(),r=TradeModel.calculate(s);result=r;
  if(r.errors.length){clearResults(r.errors);return;}
@@ -51,7 +55,7 @@ function render(){
  if(r.feasible){lastDialogKey='';if($('funding-dialog').open)$('funding-dialog').close();}
 }
 function showWarning(force=false){
- const r=result;if(!r||r.errors.length||r.feasible)return;
+ const r=result;if($('app-shell').hidden||$('import-dialog').open||!r||r.errors.length||r.feasible)return;
  const key=JSON.stringify([r.gap,r.firstGap?.node,r.firstGap?.label,r.sequenceErrors]);if(!force&&key===lastDialogKey)return;lastDialogKey=key;
  $('dialog-title').textContent=r.gap>0?'不满足零垫资条件':'先保函，后付款';
  $('dialog-description').textContent=r.gap>0?`节点 ${r.firstGap.node}「${r.firstGap.label}」后现金首次为负，缺口 ${fmt(-r.firstGap.balance)} 万元。${r.sequenceErrors.join('；')}`:r.sequenceErrors.join('；');
@@ -60,10 +64,24 @@ function showWarning(force=false){
 }
 function applyPreset(value){if(value==='custom')return;$('gNode').value=1;$('upDeposit').value=value==='receive'?3:2;$('upTail').value=value==='receive'?5:4;clients.forEach(c=>{c.deposit=value==='receive'?2:3;c.tail=value==='receive'?4:5;});renderClients();render();showWarning();}
 document.addEventListener('input',e=>{const el=e.target;if(el.dataset.client){const c=clients.find(c=>c.id===Number(el.dataset.client));c[el.dataset.key]=el.dataset.key==='name'?el.value:el.value===''?NaN:Number(el.value);if(['deposit','tail'].includes(el.dataset.key))$('preset').value='custom';render();}else if(upstreamKeys.includes(el.id)){if(['upDeposit','upTail','gNode'].includes(el.id))$('preset').value='custom';render();}});
-document.addEventListener('input',e=>{if(e.target.matches('input')){clearTimeout(warningTimer);warningTimer=setTimeout(()=>showWarning(),700);}});
-document.addEventListener('change',e=>{if(e.target.matches('input')){clearTimeout(warningTimer);render();showWarning();}});
+document.addEventListener('input',e=>{if(e.target.matches('#app-shell input')){clearTimeout(warningTimer);warningTimer=setTimeout(()=>showWarning(),700);}});
+document.addEventListener('change',e=>{if(e.target.matches('#app-shell input')){clearTimeout(warningTimer);render();showWarning();}});
 document.addEventListener('click',e=>{const remove=e.target.closest('[data-remove]');if(remove){clients=clients.filter(c=>c.id!==Number(remove.dataset.remove));renderClients();render();showWarning();}if(e.target.id==='show-gap')showWarning(true);});
 $('add-client').addEventListener('click',()=>{const q=Math.max(1,Number($('q').value)-clients.reduce((s,c)=>s+(Number.isFinite(c.q)?c.q:0),0));clients.push({id:nextId++,name:'下游 '+String.fromCharCode(65+clients.length%26),p:Number($('p').value)||100,q,x:35,b:0,deposit:2,tail:4,guarantee:0});$('preset').value='custom';renderClients();render();showWarning();});
 $('allocation').addEventListener('change',()=>{if($('allocation').value==='manual'&&result&&!result.errors.length){result.clients.forEach(rc=>{clients.find(c=>c.id===rc.id).guarantee=rc.g;});}renderClients();render();showWarning();});
 $('preset').addEventListener('change',e=>applyPreset(e.target.value));$('close-dialog').addEventListener('click',()=>$('funding-dialog').close());
 renderClients();render();
+
+function status(message,isError=false){$('data-status').textContent=message;$('data-status').classList.toggle('negative',isError);}
+function resetImport(){pendingImport=null;$('apply-json').disabled=true;$('import-preview').textContent='';$('import-error').textContent='';}
+function checkImport(){resetImport();try{const parsed=TradeData.parse($('json-text').value);pendingImport=parsed;$('apply-json').disabled=false;const r=parsed.result;$('import-preview').textContent=`${r.clients.length} 位客户 · 采购 ${fmt(r.cost)} 万元 · 销售 ${fmt(r.sales)} 万元 · 利润 ${fmt(r.profit)} 万元`+(r.feasible?' · 满足零垫资':r.gap>0?` · 最大垫资缺口 ${fmt(r.gap)} 万元`:' · 保函与付款顺序待调整');}catch(e){$('import-error').textContent=e.message;}}
+$('open-import').addEventListener('click',()=>{clearTimeout(warningTimer);resetImport();$('json-text').value='';$('json-file').value='';$('import-dialog').showModal();});
+$('close-import').addEventListener('click',()=>$('import-dialog').close());
+$('json-text').addEventListener('input',resetImport);
+$('json-file').addEventListener('change',async e=>{resetImport();const file=e.target.files[0];if(!file)return;if(file.size>TradeData.LIMIT){$('import-error').textContent='JSON 文件不能超过 512 KB';return;}try{$('json-text').value=await file.text();checkImport();}catch{$('import-error').textContent='无法读取文件';}});
+$('validate-json').addEventListener('click',checkImport);
+$('apply-json').addEventListener('click',()=>{if(!pendingImport)return;let verified;try{verified=TradeData.parse($('json-text').value);}catch(e){resetImport();$('import-error').textContent=e.message;return;}const s=verified.state;upstreamKeys.forEach(k=>$(k).value=s[k]);$('allocation').value=s.allocation;clients=s.clients;nextId=clients.length+1;selectedEvent=-1;lastDialogKey='';$('preset').value='custom';$('import-dialog').close();pendingImport=null;renderClients();render();status('已导入 '+clients.length+' 位客户的交易数据');showWarning();});
+$('export-json').addEventListener('click',()=>{try{const data=TradeData.serialize(state()),blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='server-trade.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);status('交易数据已导出');}catch(e){status('无法导出：'+e.message,true);}});
+document.addEventListener('click',e=>{const mode=e.target.closest('[data-chart-mode]');if(mode){chartMode=mode.dataset.chartMode;if(result&&!result.errors.length)drawChart(result);}const point=e.target.closest('[data-event]');if(point&&result&&!result.errors.length){selectedEvent=Number(point.dataset.event);showEventDetail(result);$('chart').querySelectorAll('.chart-target').forEach(g=>g.classList.toggle('selected',Number(g.dataset.event)===selectedEvent));}});
+$('chart').addEventListener('keydown',e=>{const point=e.target.closest('[data-event]');if(point&&(e.key==='Enter'||e.key===' ')){e.preventDefault();point.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
+document.addEventListener('trade-locked',()=>{clearTimeout(warningTimer);resetImport();$('json-text').value='';$('json-file').value='';});

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "currency": "CNY",
+  "amountUnit": "CNY_10K",
+  "procurement": {
+    "unitPrice": 100,
+    "quantity": 10,
+    "advanceRate": 30,
+    "guaranteeRate": 32,
+    "guaranteeNode": 1,
+    "advanceNode": 3,
+    "balanceNode": 5
+  },
+  "guaranteeAllocation": "quantity",
+  "customers": [
+    {
+      "name": "下游 A",
+      "unitPrice": 110,
+      "quantity": 6,
+      "advanceRate": 35,
+      "rebateTotal": 6,
+      "advanceNode": 2,
+      "balanceNode": 4
+    },
+    {
+      "name": "下游 B",
+      "unitPrice": 112,
+      "quantity": 4,
+      "advanceRate": 35,
+      "rebateTotal": 4,
+      "advanceNode": 2,
+      "balanceNode": 4
+    }
+  ]
+}

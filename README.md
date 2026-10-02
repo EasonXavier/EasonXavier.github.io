@@ -22,7 +22,7 @@
 5. [服务器交易现金流测算](https://easonx.me/server-cashflow/)
    - 预付款、尾款、居间返点与保函分配
    - 默认先保函后付款，任意时点需要垫资时自动提示
-   - 测试版 v0.1.0；示例数据，仅在当前页面内计算，不上传输入
+   - v0.2.0；支持 JSON 导入导出、明暗主题、现金流图表与固定密码入口；仅在当前页面内计算，不上传输入
 
 ## 文件结构
 
@@ -59,3 +59,21 @@ https://easonx.me/
 ## 服务器交易工具测试
 
 运行 `node --test tests/server-cashflow.test.cjs` 验证计算模型。工具位于本仓库 `server-cashflow/`，随 Portal 一同发布。
+
+### 交易 JSON 格式
+
+- `server-cashflow/template.json` 为可直接导入的完整模板。
+- `server-cashflow/schema.json` 为 JSON Schema 2020-12 定义。
+- `schemaVersion` 固定为 `1.0`，`currency` 为 `CNY`，`amountUnit` 为 `CNY_10K`（万元）。
+- 百分比用数值 30 表示 30%，节点用 1–999 的整数表示；先保函、后付款。
+- `procurement` 描述采购单价、数量、预付款和保函比例及节点。
+- `customers` 描述各下游名称、销售单价、数量、预付款比例、返点总额及收款节点。返点总额必填，明确无返点时填 0。
+- `guaranteeAllocation` 为 `quantity`（按数量）或 `manual`（手动额度）；手动模式下每个客户必须提供 `guaranteeAmount`。
+- 导入先校验再替换，不猜测缺失数据。存在垫资或保函顺序问题的合法数据可导入，导入后立即显示风险提示。
+- 当前数据可导出；刷新页面会恢复预设参数。仅主题偏好保存到本机。
+
+### 访问入口
+
+固定密码采用加盐 PBKDF2 校验，源代码不保存明文密码。此功能只限制普通页面入口；GitHub Pages 及仓库仍为公开静态资源，不能用来保护机密数据或替代服务端认证。锁定不会上传、保存或清空当前交易，刷新需重新输入密码。
+
+校验命令：`node tests/server-cashflow-data.test.cjs`。密码不得提交至本仓库。

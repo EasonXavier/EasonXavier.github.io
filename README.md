@@ -19,14 +19,19 @@
    - 移动 UI 与微信 WebView 性能试验场
    - 当前处于开发中，用于线上测试
 
+5. [服务器交易现金流测算](https://easonx.me/server-cashflow/)
+   - 预付款、尾款、居间返点与保函分配
+   - 默认先保函后付款，任意时点需要垫资时自动提示
+   - 测试版 v0.1.0；示例数据，仅在当前页面内计算，不上传输入
+
 ## 文件结构
 
 ```text
 EasonXavier.github.io/
 ├── index.html
 ├── assets/
-│   ├── portal.v1.5.1.css
-│   ├── portal.v1.5.1.js
+│   ├── portal.v1.6.0.css
+│   ├── portal.v1.6.0.js
 │   └── fonts/
 │       ├── portal-kai.v1.3.0.woff2
 │       └── portal-text.v1.3.0.woff2
@@ -49,3 +54,8 @@ https://easonx.me/
 - Portal 版本只在门户自身的布局、功能或交互行为发生变化时更新。
 - 各工具的版本号独立维护；仅同步工具卡版本号时，不更新 Portal 自身版本。
 - 因此工具更新不会连带改变页头、`package.json` 或静态资源文件名中的 Portal 版本。
+
+
+## 服务器交易工具测试
+
+运行 `node --test tests/server-cashflow.test.cjs` 验证计算模型。工具位于本仓库 `server-cashflow/`，随 Portal 一同发布。

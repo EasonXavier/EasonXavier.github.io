@@ -1,12 +1,14 @@
 const { expect, test } = require('@playwright/test');
 
-test('renders portal 1.5.1 with canonical repository routes', async ({ page }) => {
+test('renders portal 1.6.0 with canonical repository routes', async ({ page }) => {
   await page.goto('/');
 
   await expect(page).toHaveTitle("Eason's Tools");
   await expect(page.locator('.tool-grid')).toBeVisible();
-  await expect(page.locator('.release-meta-header')).toContainText('v1.5.1');
-  await expect(page.locator('.section-heading')).toContainText('3 个可用 · 1 个开发中');
+  await expect(page.locator('.release-meta-header')).toContainText('v1.6.0');
+  await expect(page.locator('.section-heading')).toContainText('3 个可用 · 1 个开发中 · 1 个测试中');
+
+  await expect(page.locator('a[href="/server-cashflow/"]')).toContainText('零垫资测算');
 
   const qrCard = page.locator('a[href="/single-device-dftfa/"]');
   await expect(qrCard.locator('.card-version')).toHaveAttribute(
@@ -34,3 +36,4 @@ test('renders portal 1.5.1 with canonical repository routes', async ({ page }) =
   await expect(lancelotCard).toContainText('v0.1.0');
   await expect(lancelotCard).toContainText('进入试验场');
 });
+

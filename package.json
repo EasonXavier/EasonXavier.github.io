@@ -1,6 +1,6 @@
 {
   "name": "easonxavier.github.io",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Static GitHub Pages tools portal.",
   "private": true,
   "scripts": {
@@ -24,3 +24,4 @@
     "@playwright/test": "^1.61.1"
   }
 }
+

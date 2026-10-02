@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>服务器交易 · 现金流测算</title>
-<meta name="application-version" content="0.2.0">
+<meta name="application-version" content="0.3.0">
 <meta name="description" content="测算服务器采购与多客户销售的预付款、保函、居间返点、阶段现金流与交易利润。">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23163044'/%3E%3Cpath d='M7 23V15h4v8m3 0V9h4v14m3 0V5h4v18' fill='%235dd2b4'/%3E%3C/svg%3E">
-<script src="./theme.js?v=0.2.0">
+<script src="./theme.js?v=0.3.0">
 </script>
-<link rel="stylesheet" href="./style.css?v=0.2.0">
-<script defer src="./model.js">
+<link rel="stylesheet" href="./style.css?v=0.3.0">
+<script defer src="./model.js?v=0.3.0">
 </script>
-<script defer src="./data.js?v=0.2.0">
+<script defer src="./data.js?v=0.3.0">
 </script>
-<script defer src="./charts.js?v=0.2.0">
+<script defer src="./charts.js?v=0.3.0">
 </script>
-<script defer src="./app.js?v=0.2.0">
+<script defer src="./app.js?v=0.3.0">
 </script>
-<script defer src="./access.js?v=0.2.0">
+<script defer src="./access.js?v=0.3.0">
 </script>
 </head>
 <body>
@@ -50,7 +50,7 @@
 <div class="header-meta">
 <a href="../">返回 Portal</a>
 <button type="button" class="secondary" data-theme-toggle>浅色模式</button>
-<button type="button" id="lock-page" class="secondary">锁定</button>人民币 · 万元<span class="tag">v0.2.0</span>
+<button type="button" id="lock-page" class="secondary">锁定</button>人民币 · 万元<span class="tag">v0.3.0</span>
 </div>
 </header>
 <main>
@@ -68,10 +68,29 @@
 </div>
 <p id="data-status" class="data-status" role="status">
 </p>
-<section id="metrics" class="metrics" aria-live="polite">
-</section>
-<div id="alerts" aria-live="polite">
+<section id="cash-visual" class="panel cash-panel">
+<div class="section-title">
+<h2>
+现金流总览</h2>
+
 </div>
+<div id="alerts" aria-live="polite"></div>
+<div id="cash-summary" class="cash-summary">
+</div>
+<div class="chart-toolbar">
+<div class="segmented" aria-label="图表类型">
+<button data-chart-mode="balance" aria-pressed="true">累计现金余额</button>
+<button data-chart-mode="flows" aria-pressed="false">节点收支</button>
+</div>
+<div id="chart-legend" class="chart-legend">
+</div>
+</div>
+<div id="chart" class="chart">
+</div>
+<div id="event-detail" class="event-detail" aria-live="polite">
+</div>
+<section id="metrics" class="metrics" aria-live="polite"></section>
+</section>
 <div class="workspace">
 <aside>
 <section class="panel upstream">
@@ -81,10 +100,10 @@
 <span class="tiny">单一采购批次</span>
 </div>
 <div class="fields">
-<label>采购单价 P1<span class="input-unit">
+<label>采购单价 P1<span class="price-control"><span class="input-unit">
 <input id="p" type="number" value="100" min="0.000001" step="any">
 <span>万元/台</span>
-</span>
+</span><span class="adjust-buttons"><button type="button" data-adjust="procurement" data-delta="-5" aria-label="采购单价减少 5 万元">−5</button><button type="button" data-adjust="procurement" data-delta="5" aria-label="采购单价增加 5 万元">+5</button></span></span>
 </label>
 <label>采购数量 Q1<span class="input-unit">
 <input id="q" type="number" value="10" min="1" step="1">
@@ -96,17 +115,19 @@
 <span>%</span>
 </span>
 </label>
-<label>保函比例 y1<span class="input-unit">
-<input id="y" type="number" value="32" min="0" step="any">
-<span>%</span>
-</span>
-</label>
+
 </div>
 <div id="upstream-summary" class="summary-lines">
 </div>
 <div class="divider">
 </div>
 <h3>资金与付款节点</h3>
+<label class="preset-label">结算顺序<select id="preset">
+<option value="receive">先保函，先收后付</option>
+<option value="pay">先付上游，再收下游</option>
+<option value="custom">自定义节点</option>
+</select>
+</label>
 <div class="hard-rule">零垫资 · 期初资金固定为 0</div>
 <div class="fields">
 <label>付上游预付款<input id="upDeposit" type="number" min="1" max="999" step="1" value="3">
@@ -116,21 +137,7 @@
 </div>
 <p class="hint">节点数字越小越先发生。保函先于付款；同一节点先交付保函，再保守按先付上游、再收下游计算；若已确定先收款，请给收款设置更早的节点。</p>
 </section>
-<section class="panel guarantee-panel">
-<div class="section-title">
-<h2>保函分配</h2>
-</div>
-<label class="full-label">分配方式<select id="allocation">
-<option value="quantity">按采购数量占比分配</option>
-<option value="manual">手动输入各客户额度</option>
-</select>
-</label>
-<label class="full-label">保函生效并送达下游节点<input id="gNode" type="number" min="1" max="999" step="1" value="1">
-</label>
-<div id="guarantee-summary" class="summary-lines">
-</div>
-<p class="hint">额度由上游提供，直接分配给下游；不作为你的现金收入或支出。</p>
-</section>
+
 </aside>
 <div class="main-column">
 <section class="panel downstream">
@@ -147,32 +154,35 @@
 <div id="clients">
 </div>
 </section>
-<section class="panel cash-panel">
-<div class="section-title">
-<h2>
-<span class="section-no">03</span>资金路径</h2>
-<label class="preset-label">结算顺序<select id="preset">
-<option value="receive">先保函，先收后付</option>
-<option value="pay">先付上游，再收下游</option>
-<option value="custom">自定义节点</option>
+
+</div>
+</div>
+<section class="panel broker-panel"><div class="section-title"><h2>居间返点</h2><button id="add-broker" class="primary">＋ 添加居间方</button></div><p class="hint">各居间方按全部已售台数计费，每台返点 × 已售台数为应付总额；随对应下游每次回款比例支付。每次调整 1 万元/台，可直接输入小数。</p><p id="broker-total" class="section-sub"></p><div id="intermediaries" class="broker-grid"></div></section>
+<details id="guarantee-details" class="panel guarantee-panel">
+<summary><span>保函分配与覆盖</span><span class="summary-hint">展开查看与调整</span></summary>
+<div class="guarantee-body">
+<div class="guarantee-settings">
+<label>保函比例 y1<span class="input-unit">
+<input id="y" type="number" value="32" min="0" step="any">
+<span>%</span>
+</span>
+</label>
+<label class="full-label">分配方式<select id="allocation">
+<option value="quantity">按采购数量占比分配</option>
+<option value="manual">手动输入各客户额度</option>
 </select>
 </label>
+<label class="full-label">保函生效并送达下游节点<input id="gNode" type="number" min="1" max="999" step="1" value="1">
+</label>
 </div>
-<div id="cash-summary" class="cash-summary">
+<div id="guarantee-inputs" class="guarantee-inputs"></div>
+<div id="guarantee-summary" class="summary-lines">
 </div>
-<div class="chart-toolbar">
-<div class="segmented" aria-label="图表类型">
-<button data-chart-mode="balance" aria-pressed="true">累计现金余额</button>
-<button data-chart-mode="flows" aria-pressed="false">节点收支</button>
+<p class="hint">额度由上游提供，直接分配给下游；不作为你的现金收入或支出。默认分配金额＝保函总额 × 客户台数 ÷ 采购台数。实际保函比例＝分配保函金额 ÷ 该客户销售合同金额；预付款覆盖率＝分配保函金额 ÷ 该客户预付款。</p>
+<div class="table-scroll"><table id="guarantee-table"><thead><tr><th>客户</th><th>销售合同金额（万元）</th><th>分配保函额度（万元）</th><th>实际保函比例</th><th>预付款</th><th>预付款覆盖率</th></tr></thead><tbody></tbody></table></div>
 </div>
-<div id="chart-legend" class="chart-legend">
-</div>
-</div>
-<div id="chart" class="chart">
-</div>
-<div id="event-detail" class="event-detail" aria-live="polite">
-</div>
-<div class="table-scroll">
+</details>
+<details class="panel timeline-panel"><summary><span>各节点收支明细</span><span class="summary-hint">展开查看</span></summary><div class="details-body"><div class="table-scroll">
 <table id="timeline">
 <caption class="sr-only">各节点现金流和回款折算利润</caption>
 <thead>
@@ -191,11 +201,11 @@
 </table>
 </div>
 <p class="hint">返点在每次收款时同步支付。回款折算利润＝各客户合同利润 × 累计回款比例之和，仅作阶段收益观察，不代表财务确认利润。</p>
-</section>
+</div></details>
 <section class="panel profit-panel">
 <div class="section-title">
 <h2>
-<span class="section-no">04</span>客户收益与担保覆盖</h2>
+客户收益</h2>
 </div>
 <div class="table-scroll">
 <table id="profit">
@@ -204,11 +214,9 @@
 <th>客户</th>
 <th>销售额</th>
 <th>采购成本</th>
-<th>返点总额</th>
+<th>分摊居间返点</th>
 <th>交易利润</th>
 <th>利润率</th>
-<th>保函额度</th>
-<th>预付款覆盖率</th>
 </tr>
 </thead>
 <tbody>
@@ -218,8 +226,6 @@
 <div id="reconcile" class="reconcile">
 </div>
 </section>
-</div>
-</div>
 <section id="rules" class="rules">
 <h2>计算口径</h2>
 <div class="rule-grid">
@@ -229,11 +235,11 @@
 </div>
 <div>
 <h3>回款与返点</h3>
-<p>客户销售额 Si＝Pdi × Qdi；预付款＝Si × xdi%。每次收款时支付返点 Bdi × 本次收款比例，全部回款后累计返点等于 Bdi。</p>
+<p>客户销售额 Si＝Pdi × Qdi；预付款＝Si × xdi%。居间方 j 的返点总额＝每台返点 Rj × 已售台数。每次客户回款时支付 ΣRj × 该客户台数 × 本次收款比例；尾款支付剩余返点，全部回款后结清。</p>
 </div>
 <div>
 <h3>收益与库存</h3>
-<p>已售合同交易利润＝Σ[(Pdi − P1) × Qdi − Bdi]。未售服务器按采购成本列示，不假设销售收入。期末净现金流＝已售合同利润 − 未售库存成本。</p>
+<p>已售合同交易利润＝Σ[(Pdi − P1 − ΣRj) × Qdi]。未售服务器按采购成本列示，不假设销售收入。期末净现金流＝已售合同利润 − 未售库存成本。</p>
 </div>
 <div>
 <h3>资金缺口与边界</h3>
@@ -247,16 +253,6 @@
 </footer>
 </main>
 </div>
-<dialog id="funding-dialog" aria-labelledby="dialog-title">
-<div class="dialog-icon">!</div>
-<h2 id="dialog-title">不满足零垫资条件</h2>
-<p id="dialog-description">
-</p>
-<div id="dialog-amount">
-</div>
-<p class="hint">可提前收取下游款项、提高下游预付款比例，或延后上游付款。关闭提示不会使方案变为可执行。</p>
-<button id="close-dialog" class="primary">返回调整条件</button>
-</dialog>
 <dialog id="import-dialog" aria-labelledby="import-title">
 <div class="section-title">
 <h2 id="import-title">导入交易数据</h2>
@@ -265,9 +261,9 @@
 <label class="file-label">选择 JSON 文件<input id="json-file" type="file" accept=".json,application/json">
 </label>
 <label for="json-text">或粘贴 JSON</label>
-<textarea id="json-text" spellcheck="false" placeholder='{"schemaVersion":"1.0", ...}'>
+<textarea id="json-text" spellcheck="false" placeholder='{"schemaVersion":"2.0", ...}'>
 </textarea>
-<p class="hint">格式 v1.0 · 人民币万元（CNY_10K）· 比例 30 表示 30%。最多 200 位客户，文件不超过 512 KB。导入将替换当前交易。</p>
+<p class="hint">格式 v2.0 · 人民币万元（CNY_10K）· 比例 30 表示 30%。最多 200 位客户、20 位居间方，文件不超过 512 KB。导入将替换当前交易。</p>
 <p class="hint">
 <a href="./template.json" download>下载数据模板</a> · <a href="./schema.json" download>下载 JSON Schema</a>
 </p>

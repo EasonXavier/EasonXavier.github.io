@@ -9,19 +9,25 @@ function calculate(s){
  num(s.upDeposit,'上游预付款节点',1,999,true);num(s.upTail,'上游尾款节点',1,999,true);num(s.gNode,'保函节点',1,999,true);
  if(s.upTail<s.upDeposit)errors.push('上游尾款节点不能早于预付款节点');
  if(!['quantity','manual'].includes(s.allocation))errors.push('保函分配方式无效');
+ if(!Array.isArray(s.intermediaries)||s.intermediaries.length>20)return {errors:['居间方数据无效（最多 20 位）'],warnings:[]};
+ s.intermediaries.forEach((b,i)=>num(b.rate,'居间方'+(i+1)+'每台返点'));
  if(!Array.isArray(s.clients))return {errors:['客户数据无效'],warnings:[]};
- s.clients.forEach((c,i)=>{const k='客户'+(i+1)+'：';num(c.p,k+'销售单价',0.000001);num(c.q,k+'数量',1,1000000,true);num(c.x,k+'预付款比例',0,100);num(c.b,k+'返点');num(c.deposit,k+'收预付款节点',1,999,true);num(c.tail,k+'收尾款节点',1,999,true);if(s.allocation==='manual')num(c.guarantee,k+'保函额度');if(c.tail<c.deposit)errors.push(k+'尾款节点不能早于预付款节点');});
+ s.clients.forEach((c,i)=>{const k='客户'+(i+1)+'：';num(c.p,k+'销售单价',0.000001);num(c.q,k+'数量',1,1000000,true);num(c.x,k+'预付款比例',0,100);num(c.deposit,k+'收预付款节点',1,999,true);num(c.tail,k+'收尾款节点',1,999,true);if(s.allocation==='manual')num(c.guarantee,k+'保函额度');if(c.tail<c.deposit)errors.push(k+'尾款节点不能早于预付款节点');});
  if(errors.length)return {errors,warnings};
  const cost=money(s.p*s.q), soldQ=sum(s.clients.map(c=>c.q)), guarantee=money(cost*s.y/100);
  if(cost>1e9||sum(s.clients.map(c=>c.p*c.q))>1e9||guarantee>1e9){return {errors:['交易金额超出支持范围（总额上限 10 亿万元）'],warnings};}
  if(soldQ>s.q)errors.push('销售数量超过采购数量 '+(soldQ-s.q)+' 台，请调整数量');
  let allocated=0;
+ const brokerAllocations=s.intermediaries.map(b=>({...b,allocations:s.clients.map(c=>{const total=money(b.rate*c.q),deposit=money(total*c.x/100);return {total,deposit,tail:money(total-deposit)};})}));
+ const intermediaries=brokerAllocations.map(b=>({...b,total:sum(b.allocations.map(a=>a.total)),deposit:sum(b.allocations.map(a=>a.deposit)),tail:sum(b.allocations.map(a=>a.tail))}));
+ if(sum(intermediaries.map(b=>b.total))>1e9)return {errors:['居间返点总额超出支持范围（上限 10 亿万元）'],warnings};
  const clients=s.clients.map((c,i)=>{
-  const sales=money(c.p*c.q),purchase=money(s.p*c.q),profit=money(sales-purchase-c.b),depositCash=money(sales*c.x/100),depositRebate=money(c.b*c.x/100);
+  const b=sum(intermediaries.map(b=>b.allocations[i].total)),depositRebate=sum(intermediaries.map(b=>b.allocations[i].deposit));
+  const sales=money(c.p*c.q),purchase=money(s.p*c.q),profit=money(sales-purchase-b),depositCash=money(sales*c.x/100);
   let g=s.allocation==='manual'?money(c.guarantee):money(guarantee*c.q/s.q);
   if(s.allocation==='quantity'&&soldQ===s.q&&i===s.clients.length-1)g=money(guarantee-allocated);
   allocated=money(allocated+g);
-  return {...c,name:(c.name||'客户 '+(i+1)).trim()||'客户 '+(i+1),sales,purchase,profit,depositCash,depositRebate,tailCash:money(sales-depositCash),tailRebate:money(c.b-depositRebate),g,coverage:depositCash?g/depositCash*100:null,margin:sales?profit/sales*100:null};
+  return {...c,b,name:(c.name||'客户 '+(i+1)).trim()||'客户 '+(i+1),sales,purchase,profit,depositCash,depositRebate,tailCash:money(sales-depositCash),tailRebate:money(b-depositRebate),g,allocationRate:guarantee?g/guarantee*100:null,guaranteeSalesRate:sales?g/sales*100:null,coverage:depositCash?g/depositCash*100:null,margin:sales?profit/sales*100:null};
  });
  if(allocated-guarantee>0.0000005)errors.push('分配保函超过上游总额度 '+money(allocated-guarantee)+' 万元');
  if(errors.length)return {errors,warnings};
@@ -46,7 +52,7 @@ function calculate(s){
  if(soldQ<s.q)warnings.push('尚有 '+(s.q-soldQ)+' 台未出售，采购款仍按全部 '+s.q+' 台支付。');
  const under=clients.filter(c=>c.coverage!==null&&c.coverage<100-1e-8);if(under.length)warnings.push(under.map(c=>c.name).join('、')+' 的保函额度低于其预付款。');
  if(clients.some(c=>c.profit<0))warnings.push('存在扣除返点后亏损的客户合同。');
- return {errors,warnings,sequenceErrors,clients,cost,soldQ,guarantee,allocated,unallocated:money(guarantee-allocated),sales,rebates,profit,inventory,upfront,depositNet,events,finalCash:balance,minBalance,gap:money(-minBalance),firstGap,feasible:minBalance>=0&&sequenceErrors.length===0,margin:sales?profit/sales*100:null};
+ return {errors,warnings,sequenceErrors,clients,intermediaries,cost,soldQ,guarantee,allocated,unallocated:money(guarantee-allocated),sales,rebates,profit,inventory,upfront,depositNet,events,finalCash:balance,minBalance,gap:money(-minBalance),firstGap,feasible:minBalance>=0&&sequenceErrors.length===0,margin:sales?profit/sales*100:null};
 }
 const api={calculate,money};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.TradeModel=api;
 })(typeof globalThis==='undefined'?this:globalThis);

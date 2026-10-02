@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "服务器交易数据 v1.0",
-  "description": "CNY_10K 表示万元；比例以百分数填写，如 30 表示 30%。同节点先交付保函，再付上游，再收下游并支付返点。",
+  "title": "服务器交易数据 v2.0",
+  "description": "CNY_10K 表示万元；比例以百分数填写，如 30 表示 30%。同节点先交付保函，再付上游，再收下游并支付返点。 各居间方按每台返点乘已售数量计算，并随对应客户每次回款比例支付。",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -10,11 +10,12 @@
     "amountUnit",
     "procurement",
     "guaranteeAllocation",
-    "customers"
+    "customers",
+    "intermediaries"
   ],
   "properties": {
     "schemaVersion": {
-      "const": "1.0"
+      "const": "2.0"
     },
     "currency": {
       "const": "CNY"
@@ -89,7 +90,6 @@
           "unitPrice",
           "quantity",
           "advanceRate",
-          "rebateTotal",
           "advanceNode",
           "balanceNode"
         ],
@@ -115,11 +115,6 @@
             "minimum": 0,
             "maximum": 100
           },
-          "rebateTotal": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1000000000.0
-          },
           "advanceNode": {
             "type": "integer",
             "minimum": 1,
@@ -131,6 +126,31 @@
             "maximum": 999
           },
           "guaranteeAmount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000.0
+          }
+        }
+      }
+    },
+    "intermediaries": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "rebatePerUnit"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "pattern": "\\S"
+          },
+          "rebatePerUnit": {
             "type": "number",
             "minimum": 0,
             "maximum": 1000000000.0

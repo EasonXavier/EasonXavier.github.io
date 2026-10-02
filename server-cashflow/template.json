@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "currency": "CNY",
   "amountUnit": "CNY_10K",
   "procurement": {
@@ -18,7 +18,6 @@
       "unitPrice": 110,
       "quantity": 6,
       "advanceRate": 35,
-      "rebateTotal": 6,
       "advanceNode": 2,
       "balanceNode": 4
     },
@@ -27,9 +26,18 @@
       "unitPrice": 112,
       "quantity": 4,
       "advanceRate": 35,
-      "rebateTotal": 4,
       "advanceNode": 2,
       "balanceNode": 4
+    }
+  ],
+  "intermediaries": [
+    {
+      "name": "居间 A",
+      "rebatePerUnit": 1
+    },
+    {
+      "name": "居间 B",
+      "rebatePerUnit": 0
     }
   ]
 }

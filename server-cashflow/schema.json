@@ -189,6 +189,13 @@
     "calculation": {
       "type": "object",
       "description": "完整计算快照，包括客户、居间方、现金流事件、收益和零垫资状态。导入时忽略并按输入重新计算。"
+    },
+    "tradeName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60,
+      "pattern": "\\S",
+      "description": "贸易条件名称，暂存、JSON 和客户图片使用同一名称。"
     }
   },
   "allOf": [

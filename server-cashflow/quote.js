@@ -4,7 +4,7 @@ function build(s,index){
  const model=typeof module!=='undefined'&&module.exports?require('./model.js'):root.TradeModel;
  const r=model.calculate(s);if(r.errors.length)throw new Error(r.errors.join('；'));
  const c=r.clients[index];if(!c)throw new Error('请选择下游客户');
- return {name:c.name,unitPrice:c.p,quantity:c.q,sales:c.sales,guarantee:c.g,guaranteeRate:c.guaranteeSalesRate,guaranteeNode:s.gNode,advanceRate:c.x,advance:c.depositCash,balance:c.tailCash,advanceNode:c.deposit,balanceNode:c.tail,rebate:c.b,advanceRebate:c.depositRebate,balanceRebate:c.tailRebate,intermediaries:r.intermediaries.map(b=>({name:b.name,perUnit:b.rate,...b.allocations[index]}))};
+ return {tradeName:s.tradeName||'',name:c.name,unitPrice:c.p,quantity:c.q,sales:c.sales,guarantee:c.g,guaranteeRate:c.guaranteeSalesRate,guaranteeNode:s.gNode,advanceRate:c.x,advance:c.depositCash,balance:c.tailCash,advanceNode:c.deposit,balanceNode:c.tail,rebate:c.b,advanceRebate:c.depositRebate,balanceRebate:c.tailRebate,intermediaries:r.intermediaries.map(b=>({name:b.name,perUnit:b.rate,...b.allocations[index]}))};
 }
 function canvas(q){
  const width=960,pad=60,body=width-pad*2,scale=2;
@@ -22,6 +22,7 @@ function canvas(q){
  function section(title){line();text(title,23,'#244c3e',650);y+=8;}
  function pair(label,value){rows.push({kind:'pair',label,value,y});y+=43;}
  text('交易条件确认',16,'#637b71',600);y+=10;text('成交与付款说明',38,'#193a2d',650);y+=18;
+ if(q.tradeName){text(q.tradeName,21,'#637b71',500);y+=8;}
  text(q.name,26,'#193a2d',600);y+=12;
  pair('成交单价',amount(q.unitPrice)+' 万元 / 台');pair('成交数量',q.quantity.toLocaleString('zh-CN')+' 台');pair('销售合同总额',amount(q.sales)+' 万元');
  section('01  保函安排');pair('分配保函金额',amount(q.guarantee)+' 万元');pair('占销售合同总额',rate(q.guaranteeRate));pair('保函生效并送达',`节点 ${q.guaranteeNode}`);

@@ -8,10 +8,11 @@ function number(v,path,min,max,integer=false){if(typeof v!=='number'||!Number.is
 function parse(input){
  let data=input;
  if(typeof input==='string'){if(new TextEncoder().encode(input).length>LIMIT)fail('JSON 文件不能超过 2 MB');try{data=JSON.parse(input.replace(/^\uFEFF/,''));}catch(e){fail('JSON 格式错误，请检查引号、逗号和括号');}}
- object(data,['schemaVersion','currency','amountUnit','procurement','guaranteeAllocation','customers','intermediaries','advanceMarginPoints','calculation'],'根对象');
+ object(data,['schemaVersion','currency','amountUnit','procurement','guaranteeAllocation','customers','intermediaries','advanceMarginPoints','calculation','tradeName'],'根对象');
  if(data.schemaVersion!==VERSION)fail('schemaVersion 必须为 "2.0"；旧版按客户返点，请改用新版居间方每台返点模板');if(data.currency!=='CNY')fail('currency 必须为 "CNY"');if(data.amountUnit!=='CNY_10K')fail('amountUnit 必须为 "CNY_10K"（万元）');
+ if(Object.hasOwn(data,'tradeName')&&(typeof data.tradeName!=='string'||!data.tradeName.trim()||data.tradeName.trim().length>60))fail('tradeName 必须为 1–60 个字符');
  const p=data.procurement;object(p,['unitPrice','quantity','advanceRate','guaranteeRate','guaranteeNode','advanceNode','balanceNode','guaranteeBasePrice','guaranteeBaseMode'],'procurement');
- const s={p:number(p.unitPrice,'采购单价',.000001,1e9),q:number(p.quantity,'采购数量',1,1e6,true),x:number(p.advanceRate,'上游预付款比例',0,100),y:number(p.guaranteeRate,'保函比例',0,1000),gNode:number(p.guaranteeNode,'保函节点',1,999,true),upDeposit:number(p.advanceNode,'上游预付款节点',1,999,true),upTail:number(p.balanceNode,'上游尾款节点',1,999,true),advanceMargin:Object.hasOwn(data,'advanceMarginPoints')?number(data.advanceMarginPoints,'advanceMarginPoints',0,100):3,allocation:data.guaranteeAllocation,clients:[],intermediaries:[]};
+ const s={tradeName:data.tradeName?.trim()||'',p:number(p.unitPrice,'采购单价',.000001,1e9),q:number(p.quantity,'采购数量',1,1e6,true),x:number(p.advanceRate,'上游预付款比例',0,100),y:number(p.guaranteeRate,'保函比例',0,1000),gNode:number(p.guaranteeNode,'保函节点',1,999,true),upDeposit:number(p.advanceNode,'上游预付款节点',1,999,true),upTail:number(p.balanceNode,'上游尾款节点',1,999,true),advanceMargin:Object.hasOwn(data,'advanceMarginPoints')?number(data.advanceMarginPoints,'advanceMarginPoints',0,100):3,allocation:data.guaranteeAllocation,clients:[],intermediaries:[]};
  s.bMode=p.guaranteeBaseMode||(Object.hasOwn(p,'guaranteeBasePrice')?'manual':'follow');
  if(!['follow','manual'].includes(s.bMode))fail('guaranteeBaseMode 必须为 follow 或 manual');
  if(s.bMode==='manual'&&!Object.hasOwn(p,'guaranteeBasePrice'))fail('手动保函基数需要 guaranteeBasePrice');
@@ -29,7 +30,7 @@ function parse(input){
 }
 function serialize(s){
  const model=typeof module!=='undefined'&&module.exports?require('./model.js'):root.TradeModel;const result=model.calculate(s);if(result.errors.length)fail(result.errors.join('；'));
- const data={schemaVersion:VERSION,currency:'CNY',amountUnit:'CNY_10K',procurement:{unitPrice:s.p,guaranteeBasePrice:result.guaranteeBase,guaranteeBaseMode:s.bMode||(s.b===undefined?'follow':'manual'),quantity:s.q,advanceRate:s.x,guaranteeRate:s.y,guaranteeNode:s.gNode,advanceNode:s.upDeposit,balanceNode:s.upTail},guaranteeAllocation:s.allocation,advanceMarginPoints:s.advanceMargin===undefined?3:s.advanceMargin,intermediaries:s.intermediaries.map(b=>({name:b.name,rebatePerUnit:b.rate})),customers:result.clients.map(c=>({name:c.name,unitPrice:c.p,quantity:c.q,advanceRate:c.x,advanceMode:c.advanceMode||'manual',advanceNode:c.deposit,balanceNode:c.tail,...(s.allocation==='manual'?{guaranteeAmount:c.guarantee}:{})}))};
+ const data={...(s.tradeName?{tradeName:s.tradeName.trim()}:{}),schemaVersion:VERSION,currency:'CNY',amountUnit:'CNY_10K',procurement:{unitPrice:s.p,guaranteeBasePrice:result.guaranteeBase,guaranteeBaseMode:s.bMode||(s.b===undefined?'follow':'manual'),quantity:s.q,advanceRate:s.x,guaranteeRate:s.y,guaranteeNode:s.gNode,advanceNode:s.upDeposit,balanceNode:s.upTail},guaranteeAllocation:s.allocation,advanceMarginPoints:s.advanceMargin===undefined?3:s.advanceMargin,intermediaries:s.intermediaries.map(b=>({name:b.name,rebatePerUnit:b.rate})),customers:result.clients.map(c=>({name:c.name,unitPrice:c.p,quantity:c.q,advanceRate:c.x,advanceMode:c.advanceMode||'manual',advanceNode:c.deposit,balanceNode:c.tail,...(s.allocation==='manual'?{guaranteeAmount:c.guarantee}:{})}))};
  parse(data);return data;
 }
 function snapshot(s){const data=serialize(s);const model=typeof module!=='undefined'&&module.exports?require('./model.js'):root.TradeModel;return {...data,calculation:model.calculate(parse(data).state)};}

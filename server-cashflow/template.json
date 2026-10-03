@@ -31,5 +31,6 @@
       "advanceMode": "auto"
     }
   ],
-  "advanceMarginPoints": 3
+  "advanceMarginPoints": 3,
+  "tradeName": "默认交易条件"
 }

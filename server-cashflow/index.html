@@ -4,22 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>服务器交易 · 现金流测算</title>
-<meta name="application-version" content="0.6.0">
+<meta name="application-version" content="0.7.0">
 <meta name="description" content="测算服务器采购与多客户销售的预付款、保函、居间返点、阶段现金流与交易利润。">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23163044'/%3E%3Cpath d='M7 23V15h4v8m3 0V9h4v14m3 0V5h4v18' fill='%235dd2b4'/%3E%3C/svg%3E">
-<script src="./theme.js?v=0.6.0">
+<script src="./theme.js?v=0.7.0">
 </script>
-<link rel="stylesheet" href="./style.css?v=0.6.0">
-<script defer src="./model.js?v=0.6.0">
+<link rel="stylesheet" href="./style.css?v=0.7.0">
+<script defer src="./model.js?v=0.7.0">
 </script>
-<script defer src="./data.js?v=0.6.0">
+<script defer src="./data.js?v=0.7.0">
 </script>
-<script defer src="./charts.js?v=0.6.0">
+<script defer src="./charts.js?v=0.7.0">
 </script>
-<script defer src="./quote.js?v=0.6.0"></script>
-<script defer src="./app.js?v=0.6.0">
+<script defer src="./quote.js?v=0.7.0"></script>
+<script defer src="./app.js?v=0.7.0">
 </script>
-<script defer src="./access.js?v=0.6.0">
+<script defer src="./plans.js?v=0.7.0"></script>
+<script defer src="./plans-ui.js?v=0.7.0"></script>
+<script defer src="./access.js?v=0.7.0">
 </script>
 </head>
 <body>
@@ -51,7 +53,7 @@
 <div class="header-meta">
 <a href="../">返回 Portal</a>
 <button type="button" class="secondary" data-theme-toggle>浅色模式</button>
-<button type="button" id="lock-page" class="secondary">锁定</button><span class="currency-note">人民币 · 万元</span><span class="tag">v0.6.0</span>
+<button type="button" id="lock-page" class="secondary">锁定</button><span class="currency-note">人民币 · 万元</span><span class="tag">v0.7.0</span>
 </div>
 </header>
 <div class="status-dock" aria-label="全局资金指标"><div id="live-summary" role="status" aria-live="polite"></div></div>
@@ -69,6 +71,7 @@
 <a href="#rules" class="text-link">计算口径</a>
 </div>
 </div>
+<section class="plan-bar" aria-label="贸易条件暂存"><div class="plan-editor"><label for="trade-name">贸易条件名称<input id="trade-name" maxlength="60" value="默认交易条件" placeholder="例如：128 台 · 深圳交付"></label><div class="plan-actions"><button id="save-plan" class="primary" type="button">暂存当前</button><button id="copy-plan" class="secondary" type="button">另存新方案</button></div></div><div id="plan-list" class="plan-list" aria-label="已暂存贸易条件"></div><p id="plan-status" class="hint" role="status"></p><p class="hint storage-note">暂存仅保留在当前设备、当前浏览器；清除浏览器数据会丢失，请用 JSON 备份。</p></section>
 <nav class="section-nav" aria-label="页面分区"><a href="#cash-visual">现金流</a><a href="#trade-inputs">交易条件</a><a href="#broker-panel">居间返点</a><a href="#profit-panel">收益明细</a></nav>
 <p id="data-status" class="data-status" role="status">
 </p>
@@ -250,7 +253,7 @@
 </details>
 <footer>
 <span>金额：万元 · 比例：百分数</span>
-<span>交易数据仅在当前页面处理；刷新前请导出保存。</span>
+<span>暂存方案保留在本机浏览器；跨设备使用请导出 JSON。</span>
 </footer>
 </main>
 
@@ -278,6 +281,6 @@
 <button id="apply-json" class="primary" disabled>确认导入</button>
 </div>
 </dialog>
-<dialog id="quote-dialog" aria-labelledby="quote-title"><div class="section-title"><h2 id="quote-title">客户成交与付款说明</h2><button id="close-quote" class="secondary" type="button">关闭</button></div><label>选择下游客户<select id="quote-client"></select></label><p class="hint">图片列明该客户的成交条件、两期货款与居间费用。居间费用由卖方随回款支付，不另加到客户货款中。</p><div id="quote-preview" class="quote-preview"></div><p id="quote-error" class="data-status" role="status"></p><div class="dialog-actions"><button id="save-quote" type="button" class="primary">保存 PNG 图片</button></div></dialog>
+<dialog id="quote-dialog" aria-labelledby="quote-title"><div class="section-title"><h2 id="quote-title">客户成交与付款说明</h2><button id="close-quote" class="secondary" type="button">关闭</button></div><label>选择下游客户<select id="quote-client"></select></label><p class="hint">图片列明该客户的成交条件、两期货款与居间费用。居间费用由卖方随回款支付，不另加到客户货款中。</p><div id="quote-preview" class="quote-preview"></div><div class="quote-actions"><p id="quote-error" class="data-status" role="status"></p><p class="hint">iPhone：点“保存到相册 / 分享”后选择“存储图像”，或长按上方图片选择“存储到照片”。</p><div class="dialog-actions"><a id="download-quote" class="secondary" aria-disabled="true">下载 PNG</a><button id="save-quote" type="button" class="primary" disabled>保存到相册 / 分享</button></div></div></dialog>
 </body>
 </html>

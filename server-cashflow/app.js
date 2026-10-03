@@ -9,7 +9,7 @@ let nextId=2,nextBrokerId=2,result=null;
 let intermediaries=[{id:1,name:'居间 A',rate:85}];
 let clients=[{id:1,name:'下游 A',p:1500,q:128,x:29.4,advanceMode:'auto',deposit:2,tail:4,guarantee:62272}];
 const upstreamKeys=['p','q','x','y','upDeposit','upTail','gNode','advanceMargin','b'];
-function state(){return {...Object.fromEntries(upstreamKeys.map(k=>[k,$(k).value===''?NaN:Number($(k).value)])),bMode:$('bMode').value,allocation:$('allocation').value,intermediaries:intermediaries.map(b=>({...b})),clients:clients.map(c=>({...c}))};}
+function state(){return {tradeName:$('trade-name').value.trim(),...Object.fromEntries(upstreamKeys.map(k=>[k,$(k).value===''?NaN:Number($(k).value)])),bMode:$('bMode').value,allocation:$('allocation').value,intermediaries:intermediaries.map(b=>({...b})),clients:clients.map(c=>({...c}))};}
 function adjustButtons(scope,id,step,label){return `<span class="adjust-buttons"><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="-${step}" aria-label="${esc(label)}减少 ${step} 万元">−${step}</button><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="${step}" aria-label="${esc(label)}增加 ${step} 万元">+${step}</button></span>`;}
 function parameterButtons(scope,id,key,label){const quantity=key==='q';return `<span class="adjust-buttons">${(quantity?[.5,2]:[-.1,.1]).map(n=>`<button type="button" data-adjust="${scope}" data-id="${id}" data-adjust-key="${key}" ${quantity?`data-factor="${n}"`:`data-delta="${n}"`} aria-label="${esc(label)}${quantity?(n===2?'乘以 2':'除以 2'):(n>0?'增加 0.1 个百分点':'减少 0.1 个百分点')}"${quantity&&n===.5?' title="数量须为偶数，除以 2 后至少为 1 台"':''}>${quantity?(n===2?'×2':'÷2'):(n>0?'+0.1':'−0.1')}</button>`).join('')}</span>`;}
 function adjustment(button){
@@ -41,7 +41,7 @@ function line(a,b){return `<div><span>${a}</span><strong>${b}</strong></div>`;}
 function clearResults(errors){
  $('metrics').innerHTML=metric('采购总额','—','万元')+metric('销售总额','—','万元')+metric('返点总额','—','万元')+metric('销售数量','—','台');
  $('alerts').innerHTML=`<div class="alert danger" role="alert"><ul>${errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`;
- ['event-detail','chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary','broker-total'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta, .broker .summary-lines, [id^="advance-note-"]').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';$('guarantee-table').querySelector('tbody').innerHTML='';result=null;setRiskTone(false,true);$('live-summary').innerHTML=liveStat('预付款收付净额','—','待修正输入')+liveStat('全部结算后现金余额','—','待修正输入')+liveStat('交易利润','—','待修正输入')+liveStat('零垫资检验','待修正','请检查交易条件','negative');
+ ['event-detail','chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary','broker-total'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta, .broker .summary-lines, [id^="advance-note-"]').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';$('guarantee-table').querySelector('tbody').innerHTML='';result=null;document.dispatchEvent(new Event('trade-changed'));setRiskTone(false,true);$('live-summary').innerHTML=liveStat('预付款收付净额','—','待修正输入')+liveStat('全部结算后现金余额','—','待修正输入')+liveStat('交易利润','—','待修正输入')+liveStat('零垫资检验','待修正','请检查交易条件','negative');
 }
 let chartMode='balance',selectedEvent=-1,pendingImport=null;
 function drawChart(r){
@@ -58,6 +58,7 @@ function showEventDetail(r){
 
 function setRiskTone(deficit,invalid=false){$('app-shell').classList.toggle('funding-risk',deficit);$('cash-visual').classList.toggle('has-deficit',deficit);$('cash-visual').classList.toggle('has-invalid',invalid);}
 function render(){
+ document.dispatchEvent(new Event('trade-changed'));
  const follow=$('bMode').value==='follow';if(follow)$('b').value=$('p').value;$('b').readOnly=follow;$('base-field').classList.toggle('computed-field',follow);
  const s=state(),r=TradeModel.calculate(s);result=r;
  $('export-json').disabled=r.errors.length>0;$('open-quote').disabled=r.errors.length>0||!r.clients?.length;
@@ -85,6 +86,7 @@ function render(){
  $('broker-total').textContent=`共 ${r.intermediaries.length} 位居间方 · 已售 ${r.soldQ} 台 · 返点合计 ${fmt(r.rebates)} 万元`;
  $('reconcile').innerHTML=`<span>期末现金 <strong>${fmt(r.finalCash)}</strong></span><span>＝</span><span>已售合同利润 <strong>${fmt(r.profit)}</strong></span><span>−</span><span>未售库存成本 <strong>${fmt(r.inventory)}</strong></span>`;
 }
+function applyState(s){upstreamKeys.forEach(k=>$(k).value=s[k]);$('trade-name').value=s.tradeName||'未命名贸易条件';$('bMode').value=s.bMode;$('allocation').value=s.allocation;clients=s.clients;intermediaries=s.intermediaries;nextId=clients.length+1;nextBrokerId=intermediaries.length+1;selectedEvent=-1;$('preset').value='custom';renderClients();renderBrokers();render();}
 function applyPreset(value){if(value==='custom')return;$('gNode').value=1;$('upDeposit').value=value==='receive'?3:2;$('upTail').value=value==='receive'?5:4;clients.forEach(c=>{c.deposit=value==='receive'?2:3;c.tail=value==='receive'?4:5;});renderClients();render();}
 document.addEventListener('input',e=>{const el=e.target;if(el.dataset.broker){const b=intermediaries.find(b=>b.id===Number(el.dataset.broker));b[el.dataset.key]=el.dataset.key==='name'?el.value:el.value===''?NaN:Number(el.value);render();}else if(el.dataset.client){const c=clients.find(c=>c.id===Number(el.dataset.client));c[el.dataset.key]=el.dataset.key==='name'?el.value:el.value===''?NaN:Number(el.value);if(el.dataset.key==='name')renderGuaranteeInputs();if(['deposit','tail'].includes(el.dataset.key))$('preset').value='custom';render();}else if(upstreamKeys.includes(el.id)){if(['upDeposit','upTail','gNode'].includes(el.id))$('preset').value='custom';render();}});
 $('bMode').addEventListener('change',render);
@@ -103,8 +105,8 @@ $('close-import').addEventListener('click',()=>$('import-dialog').close());
 $('json-text').addEventListener('input',resetImport);
 $('json-file').addEventListener('change',async e=>{resetImport();const file=e.target.files[0];if(!file)return;if(file.size>TradeData.LIMIT){$('import-error').textContent='JSON 文件不能超过 2 MB';return;}try{$('json-text').value=await file.text();checkImport();}catch{$('import-error').textContent='无法读取文件';}});
 $('validate-json').addEventListener('click',checkImport);
-$('apply-json').addEventListener('click',()=>{if(!pendingImport)return;let verified;try{verified=TradeData.parse($('json-text').value);}catch(e){resetImport();$('import-error').textContent=e.message;return;}const s=verified.state;upstreamKeys.forEach(k=>$(k).value=s[k]);$('bMode').value=s.bMode;$('allocation').value=s.allocation;clients=s.clients;intermediaries=s.intermediaries;nextId=clients.length+1;nextBrokerId=intermediaries.length+1;selectedEvent=-1;$('preset').value='custom';$('import-dialog').close();pendingImport=null;renderClients();renderBrokers();render();status('已导入 '+clients.length+' 位客户的交易数据');});
-$('export-json').addEventListener('click',()=>{try{const data=TradeData.snapshot(state()),blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='server-trade.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);status('已输出全部条件、计算结果与节点明细');}catch(e){status('无法导出：'+e.message,true);}});
+$('apply-json').addEventListener('click',()=>{if(!pendingImport)return;let verified;try{verified=TradeData.parse($('json-text').value);}catch(e){resetImport();$('import-error').textContent=e.message;return;}if(typeof preparePlanSwitch==='function'&&!preparePlanSwitch())return;const s=verified.state;$('import-dialog').close();pendingImport=null;document.dispatchEvent(new Event('trade-importing'));applyState(s);status('已导入 '+clients.length+' 位客户的交易数据');});
+$('export-json').addEventListener('click',()=>{try{const data=TradeData.snapshot(state()),blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=(data.tradeName||'server-trade').replace(/[\\/:*?"<>|\x00-\x1f]/g,'_')+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);status('已输出全部条件、计算结果与节点明细');}catch(e){status('无法导出：'+e.message,true);}});
 document.addEventListener('click',e=>{const mode=e.target.closest('[data-chart-mode]');if(mode){chartMode=mode.dataset.chartMode;if(result&&!result.errors.length)drawChart(result);}const point=e.target.closest('[data-event]');if(point&&result&&!result.errors.length){selectedEvent=Number(point.dataset.event);showEventDetail(result);$('chart').querySelectorAll('.chart-target').forEach(g=>g.classList.toggle('selected',Number(g.dataset.event)===selectedEvent));}});
 $('chart').addEventListener('keydown',e=>{const point=e.target.closest('[data-event]');if(point&&(e.key==='Enter'||e.key===' ')){e.preventDefault();point.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 document.addEventListener('trade-locked',()=>{resetImport();$('json-text').value='';$('json-file').value='';});
@@ -121,13 +123,25 @@ document.addEventListener('click',e=>{
 
 if(typeof ResizeObserver!=='undefined'){let chartWidth=0;new ResizeObserver(entries=>{const width=Math.round(entries[0].contentRect.width);if(width>0&&width!==chartWidth){chartWidth=width;if(result&&!result.errors.length)drawChart(result);}}).observe($('chart'));}
 
-let quoteCanvas=null,quoteName='';
+let quoteFile=null,quoteURL=null,quoteRevision=0;
+function clearQuote(){quoteRevision++;quoteFile=null;if(quoteURL)URL.revokeObjectURL(quoteURL);quoteURL=null;$('save-quote').disabled=true;$('download-quote').removeAttribute('href');$('download-quote').setAttribute('aria-disabled','true');$('quote-preview').replaceChildren();}
 function previewQuote(){
- quoteCanvas=null;$('save-quote').disabled=true;$('quote-preview').replaceChildren();$('quote-error').textContent='';
- try{const q=TradeQuote.build(state(),Number($('quote-client').value));quoteCanvas=TradeQuote.canvas(q);quoteName=q.name;$('quote-preview').replaceChildren(quoteCanvas);$('save-quote').disabled=false;}catch(e){$('quote-error').textContent=e.message;}
+ clearQuote();const revision=quoteRevision;$('quote-error').textContent='正在生成图片…';
+ try{const q=TradeQuote.build(state(),Number($('quote-client').value)),canvas=TradeQuote.canvas(q);const fileName=((q.tradeName?q.tradeName+'-':'')+q.name+'-成交与付款说明').replace(/[\\/:*?"<>|\x00-\x1f]/g,'_')+'.png';
+ canvas.toBlob(blob=>{if(revision!==quoteRevision)return;if(!blob){$('quote-error').textContent='图片生成失败，请关闭后重试';return;}quoteURL=URL.createObjectURL(blob);quoteFile=new File([blob],fileName,{type:'image/png'});const img=document.createElement('img');img.src=quoteURL;img.alt=canvas.getAttribute('aria-label');$('quote-preview').replaceChildren(img);$('download-quote').href=quoteURL;$('download-quote').download=fileName;$('download-quote').setAttribute('aria-disabled','false');$('save-quote').disabled=false;$('quote-error').textContent='图片已就绪 · 可长按图片保存';},'image/png');
+ }catch(e){$('quote-error').textContent=e.message;}
 }
 $('open-quote').addEventListener('click',()=>{if(!result||result.errors.length||!result.clients.length)return;$('quote-client').innerHTML=result.clients.map((c,i)=>`<option value="${i}">${esc(c.name)}</option>`).join('');$('quote-dialog').showModal();previewQuote();});
 $('quote-client').addEventListener('change',previewQuote);
 $('close-quote').addEventListener('click',()=>$('quote-dialog').close());
-$('save-quote').addEventListener('click',()=>{if(!quoteCanvas)return;const name=quoteName,canvas=quoteCanvas;$('save-quote').disabled=true;canvas.toBlob(blob=>{if(!blob){$('quote-error').textContent='图片生成失败，请重新打开预览再试';$('save-quote').disabled=false;return;}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(name.replace(/[\\/:*?"<>|\x00-\x1f]/g,'_')||'客户')+'-成交与付款说明.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);$('save-quote').disabled=false;$('quote-error').textContent='图片已生成并发起下载；手机也可在下载列表中保存到相册。';},'image/png');});
-document.addEventListener('trade-locked',()=>{$('quote-dialog').close();$('quote-preview').replaceChildren();quoteCanvas=null;quoteName='';});
+$('quote-dialog').addEventListener('close',clearQuote);
+$('download-quote').addEventListener('click',e=>{if(!quoteFile)e.preventDefault();});
+$('save-quote').addEventListener('click',async()=>{
+ if(!quoteFile)return;const revision=quoteRevision;
+ try{if(!navigator.share||!navigator.canShare?.({files:[quoteFile]})){$('quote-error').textContent='当前浏览器不支持系统图片分享。请长按上方图片，选择“存储到照片”；也可下载 PNG。';$('quote-preview').scrollIntoView({block:'start',behavior:'smooth'});return;}
+ // The PNG is prepared before this click to preserve iOS user activation.
+ const sharing=navigator.share({files:[quoteFile]});$('save-quote').disabled=true;await sharing;if(revision===quoteRevision)$('quote-error').textContent='系统分享已结束。是否存入相册，请以“照片”中的结果为准。';
+ }catch(e){if(revision===quoteRevision)$('quote-error').textContent=e.name==='AbortError'?'已取消，图片仍可长按保存。':'暂时无法打开系统分享，请长按上方图片选择“存储到照片”。';}
+ finally{if(revision===quoteRevision)$('save-quote').disabled=false;}
+});
+document.addEventListener('trade-locked',()=>{$('quote-dialog').close();clearQuote();});

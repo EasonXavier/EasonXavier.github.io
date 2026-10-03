@@ -14,3 +14,5 @@ label{display:block;color:var(--muted);font-size:12px;min-width:0}input,select,t
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}details>summary::before{transition:none}}
 
 @media(max-width:600px){html{scroll-padding-top:146px}}
+
+.toolbar{flex-wrap:wrap}.quote-preview{margin-top:20px;border-radius:10px;overflow:hidden;background:#f4f5f2}.quote-preview canvas{display:block;width:100%;height:auto}.quote-preview:empty{display:none}#quote-dialog{width:min(820px,calc(100vw - 28px))}

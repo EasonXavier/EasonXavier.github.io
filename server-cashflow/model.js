@@ -4,8 +4,12 @@ const money=n=>Math.round((n+Number.EPSILON)*1e6)/1e6;
 const sum=a=>money(a.reduce((s,n)=>s+n,0));
 function calculate(s){
  const errors=[]; const warnings=[];
+ const baseMode=s.bMode===undefined?(s.b===undefined?'follow':'manual'):s.bMode;
+ const guaranteeBase=baseMode==='follow'?s.p:s.b;
+ if(!['follow','manual'].includes(baseMode))errors.push('保函基数方式无效');
  const advanceMargin=s.advanceMargin===undefined?3:s.advanceMargin;
  const num=(n,name,min=0,max=1e9,integer=false)=>{if(typeof n!=='number'||!Number.isFinite(n)||n<min||n>max||(integer&&!Number.isInteger(n)))errors.push(name+'输入无效');};
+ num(guaranteeBase,'保函基数',0.000001);
  num(advanceMargin,'预付款差额 m',0,100);
  num(s.p,'采购单价',0.000001);num(s.q,'采购数量',1,1000000,true);num(s.x,'上游预付款比例',0,100);num(s.y,'保函比例',0,1000);
  num(s.upDeposit,'上游预付款节点',1,999,true);num(s.upTail,'上游尾款节点',1,999,true);num(s.gNode,'保函节点',1,999,true);
@@ -16,7 +20,7 @@ function calculate(s){
  if(!Array.isArray(s.clients))return {errors:['客户数据无效'],warnings:[]};
  s.clients.forEach((c,i)=>{const k='客户'+(i+1)+'：';if(c.advanceMode!==undefined&&!['auto','manual'].includes(c.advanceMode))errors.push(k+'预付款方式无效');num(c.p,k+'销售单价',0.000001);num(c.q,k+'数量',1,1000000,true);if(c.advanceMode!=='auto')num(c.x,k+'预付款比例',0,100);num(c.deposit,k+'收预付款节点',1,999,true);num(c.tail,k+'收尾款节点',1,999,true);if(s.allocation==='manual')num(c.guarantee,k+'保函额度');if(c.tail<c.deposit)errors.push(k+'尾款节点不能早于预付款节点');});
  if(errors.length)return {errors,warnings};
- const cost=money(s.p*s.q), soldQ=sum(s.clients.map(c=>c.q)), guarantee=money(cost*s.y/100);
+ const cost=money(s.p*s.q), soldQ=sum(s.clients.map(c=>c.q)), guarantee=money(guaranteeBase*s.q*s.y/100);
  if(cost>1e9||sum(s.clients.map(c=>c.p*c.q))>1e9||guarantee>1e9){return {errors:['交易金额超出支持范围（总额上限 10 亿万元）'],warnings};}
  if(soldQ>s.q)errors.push('销售数量超过采购数量 '+(soldQ-s.q)+' 台，请调整数量');
  let allocated=0;
@@ -62,7 +66,7 @@ function calculate(s){
  if(soldQ<s.q)warnings.push('尚有 '+(s.q-soldQ)+' 台未出售，采购款仍按全部 '+s.q+' 台支付。');
  const under=clients.filter(c=>c.coverage!==null&&c.coverage<100-1e-8);if(under.length)warnings.push(under.map(c=>c.name).join('、')+' 的保函额度低于其预付款。');
  if(clients.some(c=>c.profit<0))warnings.push('存在扣除返点后亏损的客户合同。');
- return {errors,warnings,sequenceErrors,clients,intermediaries,cost,soldQ,guarantee,allocated,unallocated:money(guarantee-allocated),sales,rebates,profit,inventory,upfront,depositNet,events,finalCash:balance,minBalance,gap:money(-minBalance),firstGap,feasible:minBalance>=0&&sequenceErrors.length===0,margin:sales?profit/sales*100:null};
+ return {errors,warnings,sequenceErrors,clients,intermediaries,cost,soldQ,guaranteeBase,guarantee,allocated,unallocated:money(guarantee-allocated),sales,rebates,profit,inventory,upfront,depositNet,events,finalCash:balance,minBalance,gap:money(-minBalance),firstGap,feasible:minBalance>=0&&sequenceErrors.length===0,margin:sales?profit/sales*100:null};
 }
 const api={calculate,money};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.TradeModel=api;
 })(typeof globalThis==='undefined'?this:globalThis);

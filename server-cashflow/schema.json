@@ -70,6 +70,19 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 999
+        },
+        "guaranteeBasePrice": {
+          "type": "number",
+          "minimum": 1e-06,
+          "maximum": 1000000000.0,
+          "description": "保函开立基数 B1，万元/台。省略时跟随采购单价。"
+        },
+        "guaranteeBaseMode": {
+          "enum": [
+            "follow",
+            "manual"
+          ],
+          "description": "follow 跟随采购单价；manual 使用 guaranteeBasePrice。"
         }
       }
     },
@@ -172,6 +185,10 @@
       "maximum": 100,
       "default": 3,
       "description": "预付款差额 m，单位：百分点；自动预付款按实际保函比例减 m 后四舍五入至 0.1 个百分点，并限制在 0–100。"
+    },
+    "calculation": {
+      "type": "object",
+      "description": "完整计算快照，包括客户、居间方、现金流事件、收益和零垫资状态。导入时忽略并按输入重新计算。"
     }
   },
   "allOf": [

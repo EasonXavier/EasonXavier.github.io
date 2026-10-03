@@ -9,7 +9,9 @@
     "guaranteeRate": 35,
     "guaranteeNode": 1,
     "advanceNode": 3,
-    "balanceNode": 5
+    "balanceNode": 5,
+    "guaranteeBasePrice": 1390,
+    "guaranteeBaseMode": "follow"
   },
   "guaranteeAllocation": "quantity",
   "intermediaries": [

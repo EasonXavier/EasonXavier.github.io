@@ -8,8 +8,8 @@ const color=n=>n<0?'negative':n>0?'positive':'';
 let nextId=2,nextBrokerId=2,result=null;
 let intermediaries=[{id:1,name:'居间 A',rate:85}];
 let clients=[{id:1,name:'下游 A',p:1500,q:128,x:29.4,advanceMode:'auto',deposit:2,tail:4,guarantee:62272}];
-const upstreamKeys=['p','q','x','y','upDeposit','upTail','gNode','advanceMargin'];
-function state(){return {...Object.fromEntries(upstreamKeys.map(k=>[k,$(k).value===''?NaN:Number($(k).value)])),allocation:$('allocation').value,intermediaries:intermediaries.map(b=>({...b})),clients:clients.map(c=>({...c}))};}
+const upstreamKeys=['p','q','x','y','upDeposit','upTail','gNode','advanceMargin','b'];
+function state(){return {...Object.fromEntries(upstreamKeys.map(k=>[k,$(k).value===''?NaN:Number($(k).value)])),bMode:$('bMode').value,allocation:$('allocation').value,intermediaries:intermediaries.map(b=>({...b})),clients:clients.map(c=>({...c}))};}
 function adjustButtons(scope,id,step,label){return `<span class="adjust-buttons"><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="-${step}" aria-label="${esc(label)}减少 ${step} 万元">−${step}</button><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="${step}" aria-label="${esc(label)}增加 ${step} 万元">+${step}</button></span>`;}
 function parameterButtons(scope,id,key,label){const quantity=key==='q';return `<span class="adjust-buttons">${(quantity?[.5,2]:[-.1,.1]).map(n=>`<button type="button" data-adjust="${scope}" data-id="${id}" data-adjust-key="${key}" ${quantity?`data-factor="${n}"`:`data-delta="${n}"`} aria-label="${esc(label)}${quantity?(n===2?'乘以 2':'除以 2'):(n>0?'增加 0.1 个百分点':'减少 0.1 个百分点')}"${quantity&&n===.5?' title="数量须为偶数，除以 2 后至少为 1 台"':''}>${quantity?(n===2?'×2':'÷2'):(n>0?'+0.1':'−0.1')}</button>`).join('')}</span>`;}
 function adjustment(button){
@@ -18,8 +18,8 @@ function adjustment(button){
  const raw=scope==='procurement'?$(key).value:item?.[key],current=raw===''?NaN:Number(raw);
  let next=button.dataset.factor?current*Number(button.dataset.factor):current+Number(button.dataset.delta);
  next=['x','advanceMargin'].includes(key)?Math.round(next*10)/10:TradeModel.money(next);
- const min=key==='p'?.000001:key==='q'?1:0,max=['x','advanceMargin'].includes(key)?100:key==='q'?1000000:1e9;
- const valid=!(scope==='client'&&key==='x'&&item?.advanceMode==='auto')&&Number.isFinite(current)&&Number.isFinite(next)&&next>=min&&next<=max&&(key!=='q'||(Number.isInteger(current)&&Number.isInteger(next)));
+ const min=['p','b'].includes(key)?.000001:key==='q'?1:0,max=['x','advanceMargin'].includes(key)?100:key==='q'?1000000:1e9;
+ const valid=!(scope==='procurement'&&key==='b'&&$('bMode').value==='follow')&&!(scope==='client'&&key==='x'&&item?.advanceMode==='auto')&&Number.isFinite(current)&&Number.isFinite(next)&&next>=min&&next<=max&&(key!=='q'||(Number.isInteger(current)&&Number.isInteger(next)));
  return {scope,key,item,next,valid,id};
 }
 function field(c,key,label,unit='',min=0,max=null,step='any'){return `<label class="${key==='x'&&c.advanceMode==='auto'?'computed-field':''}">${esc(label)}<span class="${['p','q','x'].includes(key)?'price-control':''}"><span class="input-unit"><input aria-label="${esc(c.name+' '+label)}" data-client="${c.id}" data-key="${key}" type="number" min="${min}" ${max===null?'':`max="${max}"`} step="${step}" ${key==='x'&&c.advanceMode==='auto'?'readonly aria-readonly="true"':''} value="${Number.isFinite(c[key])?c[key]:''}">${unit?`<span>${unit}</span>`:''}</span>${key==='p'?adjustButtons('client',c.id,5,c.name+' 销售单价'):['q','x'].includes(key)?parameterButtons('client',c.id,key,c.name+' '+label):''}</span></label>`;}
@@ -58,7 +58,9 @@ function showEventDetail(r){
 
 function setRiskTone(deficit,invalid=false){$('app-shell').classList.toggle('funding-risk',deficit);$('cash-visual').classList.toggle('has-deficit',deficit);$('cash-visual').classList.toggle('has-invalid',invalid);}
 function render(){
+ const follow=$('bMode').value==='follow';if(follow)$('b').value=$('p').value;$('b').readOnly=follow;$('base-field').classList.toggle('computed-field',follow);
  const s=state(),r=TradeModel.calculate(s);result=r;
+ $('export-json').disabled=r.errors.length>0;$('open-quote').disabled=r.errors.length>0||!r.clients?.length;
  if(r.errors.length){syncSteppers();clearResults(r.errors);return;}
  r.clients.forEach(rc=>{const c=clients.find(c=>c.id===rc.id);if(c.advanceMode==='auto'){c.x=rc.x;const input=document.querySelector(`[data-client="${c.id}"][data-key="x"]`);if(input)input.value=rc.x;}$('advance-note-'+c.id).innerHTML=c.advanceMode==='auto'?`<span>实际保函 <b>${pct(rc.guaranteeSalesRate)}</b></span><span class="formula-sign">−</span><span>差额 <b>${s.advanceMargin.toFixed(1)}</b> 个百分点</span><span class="formula-sign">→</span><strong>${rc.x.toFixed(1)}%</strong>`:'手动比例不随保函和差额变化';});
  syncSteppers();
@@ -70,7 +72,7 @@ function render(){
  if(r.warnings.length)alerts.push(`<div class="alert"><ul>${r.warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`);
  $('alerts').innerHTML=alerts.join('');
  $('live-summary').innerHTML=liveStat('预付款收付净额',fmt(r.depositNet),'万元 · 扣除首期返点和上游预付款',color(r.depositNet))+liveStat('全部结算后现金余额',fmt(r.finalCash),'万元 · 全部货款与返点结清',color(r.finalCash))+liveStat('交易利润',fmt(r.profit),'万元 · 已扣全部居间返点',color(r.profit))+liveStat('零垫资检验',r.gap>0?'缺口 '+fmt(r.gap):r.feasible?'满足零垫资':'顺序待调整',r.gap>0?'万元 · 最大资金缺口':r.feasible?'全程现金余额不低于 0':'请先交付保函',r.feasible?'positive':'negative');
- $('upstream-summary').innerHTML=line('采购总额',fmt(r.cost))+line('应付预付款',fmt(r.upfront))+line('应付尾款',fmt(TradeModel.money(r.cost-r.upfront)));
+ $('upstream-summary').innerHTML=line('采购总额',fmt(r.cost))+line('应付预付款',fmt(r.upfront))+line('应付尾款',fmt(TradeModel.money(r.cost-r.upfront)))+line('保函总额（B1 × 数量 × 比例）',fmt(r.guarantee));
  $('guarantee-summary').innerHTML=line('保函总额度',fmt(r.guarantee))+line('已分配额度',fmt(r.allocated))+line('保留额度',fmt(r.unallocated));
  $('quantity-summary').textContent=`已分配 ${r.soldQ} / ${s.q} 台 · ${clients.length} 位客户`;
  r.clients.forEach(c=>{$('client-meta-'+c.id).innerHTML=`<span>销售额 <strong>${fmt(c.sales)}</strong></span><span>预付款 <strong>${fmt(c.depositCash)}</strong></span><span>首期返点 <strong>${fmt(c.depositRebate)}</strong></span><span class="guarantee-result">分配保函 <strong>${fmt(c.g)} 万元</strong></span><span class="guarantee-result" title="分配保函金额 ÷ 本客户销售合同金额">实际保函比例 <strong>${pct(c.guaranteeSalesRate)}</strong></span>`;});
@@ -85,6 +87,7 @@ function render(){
 }
 function applyPreset(value){if(value==='custom')return;$('gNode').value=1;$('upDeposit').value=value==='receive'?3:2;$('upTail').value=value==='receive'?5:4;clients.forEach(c=>{c.deposit=value==='receive'?2:3;c.tail=value==='receive'?4:5;});renderClients();render();}
 document.addEventListener('input',e=>{const el=e.target;if(el.dataset.broker){const b=intermediaries.find(b=>b.id===Number(el.dataset.broker));b[el.dataset.key]=el.dataset.key==='name'?el.value:el.value===''?NaN:Number(el.value);render();}else if(el.dataset.client){const c=clients.find(c=>c.id===Number(el.dataset.client));c[el.dataset.key]=el.dataset.key==='name'?el.value:el.value===''?NaN:Number(el.value);if(el.dataset.key==='name')renderGuaranteeInputs();if(['deposit','tail'].includes(el.dataset.key))$('preset').value='custom';render();}else if(upstreamKeys.includes(el.id)){if(['upDeposit','upTail','gNode'].includes(el.id))$('preset').value='custom';render();}});
+$('bMode').addEventListener('change',render);
 document.addEventListener('change',e=>{if(e.target.dataset.advanceMode){const c=clients.find(c=>c.id===Number(e.target.dataset.advanceMode));c.advanceMode=e.target.value;renderClients();render();return;}if(e.target.matches('#app-shell input')){render();}});
 document.addEventListener('click',e=>{const remove=e.target.closest('[data-remove]');if(remove){clients=clients.filter(c=>c.id!==Number(remove.dataset.remove));renderClients();render();}});
 $('add-client').addEventListener('click',()=>{const q=Math.max(1,Number($('q').value)-clients.reduce((s,c)=>s+(Number.isFinite(c.q)?c.q:0),0));clients.push({id:nextId++,name:'下游 '+String.fromCharCode(65+clients.length%26),p:Number($('p').value)||100,q,x:35,advanceMode:'auto',deposit:2,tail:4,guarantee:0});$('preset').value='custom';renderClients();render();});
@@ -98,10 +101,10 @@ function checkImport(){resetImport();try{const parsed=TradeData.parse($('json-te
 $('open-import').addEventListener('click',()=>{resetImport();$('json-text').value='';$('json-file').value='';$('import-dialog').showModal();});
 $('close-import').addEventListener('click',()=>$('import-dialog').close());
 $('json-text').addEventListener('input',resetImport);
-$('json-file').addEventListener('change',async e=>{resetImport();const file=e.target.files[0];if(!file)return;if(file.size>TradeData.LIMIT){$('import-error').textContent='JSON 文件不能超过 512 KB';return;}try{$('json-text').value=await file.text();checkImport();}catch{$('import-error').textContent='无法读取文件';}});
+$('json-file').addEventListener('change',async e=>{resetImport();const file=e.target.files[0];if(!file)return;if(file.size>TradeData.LIMIT){$('import-error').textContent='JSON 文件不能超过 2 MB';return;}try{$('json-text').value=await file.text();checkImport();}catch{$('import-error').textContent='无法读取文件';}});
 $('validate-json').addEventListener('click',checkImport);
-$('apply-json').addEventListener('click',()=>{if(!pendingImport)return;let verified;try{verified=TradeData.parse($('json-text').value);}catch(e){resetImport();$('import-error').textContent=e.message;return;}const s=verified.state;upstreamKeys.forEach(k=>$(k).value=s[k]);$('allocation').value=s.allocation;clients=s.clients;intermediaries=s.intermediaries;nextId=clients.length+1;nextBrokerId=intermediaries.length+1;selectedEvent=-1;$('preset').value='custom';$('import-dialog').close();pendingImport=null;renderClients();renderBrokers();render();status('已导入 '+clients.length+' 位客户的交易数据');});
-$('export-json').addEventListener('click',()=>{try{const data=TradeData.serialize(state()),blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='server-trade.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);status('交易数据已导出');}catch(e){status('无法导出：'+e.message,true);}});
+$('apply-json').addEventListener('click',()=>{if(!pendingImport)return;let verified;try{verified=TradeData.parse($('json-text').value);}catch(e){resetImport();$('import-error').textContent=e.message;return;}const s=verified.state;upstreamKeys.forEach(k=>$(k).value=s[k]);$('bMode').value=s.bMode;$('allocation').value=s.allocation;clients=s.clients;intermediaries=s.intermediaries;nextId=clients.length+1;nextBrokerId=intermediaries.length+1;selectedEvent=-1;$('preset').value='custom';$('import-dialog').close();pendingImport=null;renderClients();renderBrokers();render();status('已导入 '+clients.length+' 位客户的交易数据');});
+$('export-json').addEventListener('click',()=>{try{const data=TradeData.snapshot(state()),blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='server-trade.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);status('已输出全部条件、计算结果与节点明细');}catch(e){status('无法导出：'+e.message,true);}});
 document.addEventListener('click',e=>{const mode=e.target.closest('[data-chart-mode]');if(mode){chartMode=mode.dataset.chartMode;if(result&&!result.errors.length)drawChart(result);}const point=e.target.closest('[data-event]');if(point&&result&&!result.errors.length){selectedEvent=Number(point.dataset.event);showEventDetail(result);$('chart').querySelectorAll('.chart-target').forEach(g=>g.classList.toggle('selected',Number(g.dataset.event)===selectedEvent));}});
 $('chart').addEventListener('keydown',e=>{const point=e.target.closest('[data-event]');if(point&&(e.key==='Enter'||e.key===' ')){e.preventDefault();point.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 document.addEventListener('trade-locked',()=>{resetImport();$('json-text').value='';$('json-file').value='';});
@@ -117,3 +120,14 @@ document.addEventListener('click',e=>{
 });
 
 if(typeof ResizeObserver!=='undefined'){let chartWidth=0;new ResizeObserver(entries=>{const width=Math.round(entries[0].contentRect.width);if(width>0&&width!==chartWidth){chartWidth=width;if(result&&!result.errors.length)drawChart(result);}}).observe($('chart'));}
+
+let quoteCanvas=null,quoteName='';
+function previewQuote(){
+ quoteCanvas=null;$('save-quote').disabled=true;$('quote-preview').replaceChildren();$('quote-error').textContent='';
+ try{const q=TradeQuote.build(state(),Number($('quote-client').value));quoteCanvas=TradeQuote.canvas(q);quoteName=q.name;$('quote-preview').replaceChildren(quoteCanvas);$('save-quote').disabled=false;}catch(e){$('quote-error').textContent=e.message;}
+}
+$('open-quote').addEventListener('click',()=>{if(!result||result.errors.length||!result.clients.length)return;$('quote-client').innerHTML=result.clients.map((c,i)=>`<option value="${i}">${esc(c.name)}</option>`).join('');$('quote-dialog').showModal();previewQuote();});
+$('quote-client').addEventListener('change',previewQuote);
+$('close-quote').addEventListener('click',()=>$('quote-dialog').close());
+$('save-quote').addEventListener('click',()=>{if(!quoteCanvas)return;const name=quoteName,canvas=quoteCanvas;$('save-quote').disabled=true;canvas.toBlob(blob=>{if(!blob){$('quote-error').textContent='图片生成失败，请重新打开预览再试';$('save-quote').disabled=false;return;}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(name.replace(/[\\/:*?"<>|\x00-\x1f]/g,'_')||'客户')+'-成交与付款说明.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);$('save-quote').disabled=false;$('quote-error').textContent='图片已生成并发起下载；手机也可在下载列表中保存到相册。';},'image/png');});
+document.addEventListener('trade-locked',()=>{$('quote-dialog').close();$('quote-preview').replaceChildren();quoteCanvas=null;quoteName='';});

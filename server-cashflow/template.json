@@ -25,7 +25,9 @@
       "quantity": 128,
       "advanceRate": 29.4,
       "advanceNode": 2,
-      "balanceNode": 4
+      "balanceNode": 4,
+      "advanceMode": "auto"
     }
-  ]
+  ],
+  "advanceMarginPoints": 3
 }

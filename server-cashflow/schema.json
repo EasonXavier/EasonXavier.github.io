@@ -129,6 +129,14 @@
             "type": "number",
             "minimum": 0,
             "maximum": 1000000000.0
+          },
+          "advanceMode": {
+            "enum": [
+              "auto",
+              "manual"
+            ],
+            "default": "manual",
+            "description": "auto 按保函比例减 m 重算；manual 使用 advanceRate。旧数据省略时保留手动预付款。"
           }
         }
       }
@@ -157,6 +165,13 @@
           }
         }
       }
+    },
+    "advanceMarginPoints": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 3,
+      "description": "预付款差额 m，单位：百分点；自动预付款按实际保函比例减 m 后四舍五入至 0.1 个百分点，并限制在 0–100。"
     }
   },
   "allOf": [

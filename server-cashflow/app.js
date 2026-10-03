@@ -7,8 +7,8 @@ const signed=n=>(n>0?'+':'')+fmt(n);
 const color=n=>n<0?'negative':n>0?'positive':'';
 let nextId=2,nextBrokerId=2,result=null;
 let intermediaries=[{id:1,name:'居间 A',rate:85}];
-let clients=[{id:1,name:'下游 A',p:1500,q:128,x:29.4,deposit:2,tail:4,guarantee:62272}];
-const upstreamKeys=['p','q','x','y','upDeposit','upTail','gNode'];
+let clients=[{id:1,name:'下游 A',p:1500,q:128,x:29.4,advanceMode:'auto',deposit:2,tail:4,guarantee:62272}];
+const upstreamKeys=['p','q','x','y','upDeposit','upTail','gNode','advanceMargin'];
 function state(){return {...Object.fromEntries(upstreamKeys.map(k=>[k,$(k).value===''?NaN:Number($(k).value)])),allocation:$('allocation').value,intermediaries:intermediaries.map(b=>({...b})),clients:clients.map(c=>({...c}))};}
 function adjustButtons(scope,id,step,label){return `<span class="adjust-buttons"><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="-${step}" aria-label="${esc(label)}减少 ${step} 万元">−${step}</button><button type="button" data-adjust="${scope}" data-id="${id}" data-delta="${step}" aria-label="${esc(label)}增加 ${step} 万元">+${step}</button></span>`;}
 function parameterButtons(scope,id,key,label){const quantity=key==='q';return `<span class="adjust-buttons">${(quantity?[.5,2]:[-.1,.1]).map(n=>`<button type="button" data-adjust="${scope}" data-id="${id}" data-adjust-key="${key}" ${quantity?`data-factor="${n}"`:`data-delta="${n}"`} aria-label="${esc(label)}${quantity?(n===2?'乘以 2':'除以 2'):(n>0?'增加 0.1 个百分点':'减少 0.1 个百分点')}"${quantity&&n===.5?' title="数量须为偶数，除以 2 后至少为 1 台"':''}>${quantity?(n===2?'×2':'÷2'):(n>0?'+0.1':'−0.1')}</button>`).join('')}</span>`;}
@@ -17,19 +17,19 @@ function adjustment(button){
  const item=scope==='client'?clients.find(c=>c.id===id):scope==='broker'?intermediaries.find(b=>b.id===id):null;
  const raw=scope==='procurement'?$(key).value:item?.[key],current=raw===''?NaN:Number(raw);
  let next=button.dataset.factor?current*Number(button.dataset.factor):current+Number(button.dataset.delta);
- next=key==='x'?Math.round(next*10)/10:TradeModel.money(next);
- const min=key==='p'?.000001:key==='q'?1:0,max=key==='x'?100:key==='q'?1000000:1e9;
- const valid=Number.isFinite(current)&&Number.isFinite(next)&&next>=min&&next<=max&&(key!=='q'||(Number.isInteger(current)&&Number.isInteger(next)));
+ next=['x','advanceMargin'].includes(key)?Math.round(next*10)/10:TradeModel.money(next);
+ const min=key==='p'?.000001:key==='q'?1:0,max=['x','advanceMargin'].includes(key)?100:key==='q'?1000000:1e9;
+ const valid=!(scope==='client'&&key==='x'&&item?.advanceMode==='auto')&&Number.isFinite(current)&&Number.isFinite(next)&&next>=min&&next<=max&&(key!=='q'||(Number.isInteger(current)&&Number.isInteger(next)));
  return {scope,key,item,next,valid,id};
 }
-function field(c,key,label,unit='',min=0,max=null,step='any'){return `<label>${esc(label)}<span class="${['p','q','x'].includes(key)?'price-control':''}"><span class="input-unit"><input aria-label="${esc(c.name+' '+label)}" data-client="${c.id}" data-key="${key}" type="number" min="${min}" ${max===null?'':`max="${max}"`} step="${step}" value="${Number.isFinite(c[key])?c[key]:''}">${unit?`<span>${unit}</span>`:''}</span>${key==='p'?adjustButtons('client',c.id,5,c.name+' 销售单价'):['q','x'].includes(key)?parameterButtons('client',c.id,key,c.name+' '+label):''}</span></label>`;}
+function field(c,key,label,unit='',min=0,max=null,step='any'){return `<label>${esc(label)}<span class="${['p','q','x'].includes(key)?'price-control':''}"><span class="input-unit"><input aria-label="${esc(c.name+' '+label)}" data-client="${c.id}" data-key="${key}" type="number" min="${min}" ${max===null?'':`max="${max}"`} step="${step}" ${key==='x'&&c.advanceMode==='auto'?'readonly aria-readonly="true"':''} value="${Number.isFinite(c[key])?c[key]:''}">${unit?`<span>${unit}</span>`:''}</span>${key==='p'?adjustButtons('client',c.id,5,c.name+' 销售单价'):['q','x'].includes(key)?parameterButtons('client',c.id,key,c.name+' '+label):''}</span></label>`;}
 function renderBrokers(){
  $('intermediaries').innerHTML=intermediaries.map((b,i)=>`<article class="broker"><div class="client-head"><input class="client-name" aria-label="居间方 ${i+1} 名称" data-broker="${b.id}" data-key="name" maxlength="40" value="${esc(b.name)}"><button class="remove" data-remove-broker="${b.id}" aria-label="删除${esc(b.name)}">移除</button></div><label>每台返点<span class="price-control"><span class="input-unit"><input type="number" aria-label="${esc(b.name)} 每台返点" data-broker="${b.id}" data-key="rate" value="${Number.isFinite(b.rate)?b.rate:''}" min="0" max="1000000000" step="any"><span>万元/台</span></span>${adjustButtons('broker',b.id,1,b.name+' 每台返点')}</span></label><div class="summary-lines" id="broker-summary-${b.id}"></div></article>`).join('')||'<p class="hint">未设置居间方，返点为 0。</p>';
  $('add-broker').disabled=intermediaries.length>=20;
 }
 function syncSteppers(){document.querySelectorAll('[data-adjust]').forEach(button=>{button.disabled=!adjustment(button).valid;});}
 function renderClients(){
- $('clients').innerHTML=clients.length?clients.map((c,i)=>`<article class="client" data-id="${c.id}"><div class="client-head"><div class="client-identity"><span class="client-badge">${String(i+1).padStart(2,'0')}</span><input class="client-name" aria-label="客户 ${i+1} 名称" data-client="${c.id}" data-key="name" maxlength="40" value="${esc(c.name)}"></div><button class="remove" data-remove="${c.id}" aria-label="删除${esc(c.name)}">移除</button></div><div class="client-fields">${field(c,'p','销售单价 Pd','',0.000001)}${field(c,'q','数量 Qd','台',1,1000000,1)}${field(c,'x','预付款 xd','%',0,100,.1)}${field(c,'deposit','收预付款节点','',1,999,1)}${field(c,'tail','收尾款节点','',1,999,1)}</div><div class="client-meta" id="client-meta-${c.id}"></div></article>`).join(''):'<div class="empty">暂无下游客户，点击“添加客户”开始分配销售数量。</div>';
+ $('clients').innerHTML=clients.length?clients.map((c,i)=>`<article class="client" data-id="${c.id}"><div class="client-head"><div class="client-identity"><span class="client-badge">${String(i+1).padStart(2,'0')}</span><input class="client-name" aria-label="客户 ${i+1} 名称" data-client="${c.id}" data-key="name" maxlength="40" value="${esc(c.name)}"></div><button class="remove" data-remove="${c.id}" aria-label="删除${esc(c.name)}">移除</button></div><div class="client-fields">${field(c,'p','销售单价 Pd','',0.000001)}${field(c,'q','数量 Qd','台',1,1000000,1)}<div class="advance-fields"><label>预付款方式<select data-advance-mode="${c.id}" aria-label="${esc(c.name)} 预付款方式"><option value="auto" ${c.advanceMode==='auto'?'selected':''}>自动：n − m</option><option value="manual" ${c.advanceMode!=='auto'?'selected':''}>手动设置</option></select></label>${field(c,'x','预付款 xd','%',0,100,.1)}<small id="advance-note-${c.id}" class="hint"></small></div>${field(c,'deposit','收预付款节点','',1,999,1)}${field(c,'tail','收尾款节点','',1,999,1)}</div><div class="client-meta" id="client-meta-${c.id}"></div></article>`).join(''):'<div class="empty">暂无下游客户，点击“添加客户”开始分配销售数量。</div>';
  renderGuaranteeInputs();
 }
 function renderGuaranteeInputs(){
@@ -40,7 +40,7 @@ function line(a,b){return `<div><span>${a}</span><strong>${b}</strong></div>`;}
 function clearResults(errors){
  $('metrics').innerHTML=metric('方案状态','待修正输入','修正后自动重新计算',true,true)+metric('已售合同利润','—','万元')+metric('期末现金结余','—','万元')+metric('最大垫资缺口','—','不允许垫资');
  $('alerts').innerHTML=`<div class="alert danger" role="alert"><ul>${errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`;
- ['event-detail','chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary','broker-total'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta, .broker .summary-lines').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';$('guarantee-table').querySelector('tbody').innerHTML='';result=null;setRiskTone(false,true);
+ ['event-detail','chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary','broker-total'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta, .broker .summary-lines, [id^="advance-note-"]').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';$('guarantee-table').querySelector('tbody').innerHTML='';result=null;setRiskTone(false,true);
 }
 let chartMode='balance',selectedEvent=-1,pendingImport=null;
 function drawChart(r){
@@ -57,9 +57,10 @@ function showEventDetail(r){
 
 function setRiskTone(deficit,invalid=false){$('app-shell').classList.toggle('funding-risk',deficit);$('cash-visual').classList.toggle('has-deficit',deficit);$('cash-visual').classList.toggle('has-invalid',invalid);}
 function render(){
- syncSteppers();
  const s=state(),r=TradeModel.calculate(s);result=r;
- if(r.errors.length){clearResults(r.errors);return;}
+ if(r.errors.length){syncSteppers();clearResults(r.errors);return;}
+ r.clients.forEach(rc=>{const c=clients.find(c=>c.id===rc.id);if(c.advanceMode==='auto'){c.x=rc.x;const input=document.querySelector(`[data-client="${c.id}"][data-key="x"]`);if(input)input.value=rc.x;}$('advance-note-'+c.id).textContent=c.advanceMode==='auto'?`n ${pct(rc.guaranteeSalesRate)} − m ${s.advanceMargin.toFixed(1)} 个百分点 → ${rc.x.toFixed(1)}%`:'按手动设置的比例收款';});
+ syncSteppers();
  setRiskTone(r.gap>0,r.sequenceErrors.length>0);
  let status=r.gap>0?'需要垫资':r.sequenceErrors.length?'顺序待调整':'满足零垫资';
  $('metrics').innerHTML=metric('方案状态',status,r.gap>0?'方案不可执行 · 请调整收付款条件':r.sequenceErrors.length?'先保函，后付款':'按当前节点顺序测算',true,!r.feasible)+metric('已售合同交易利润',`${fmt(r.profit)}<small>万元</small>`,`利润率 ${pct(r.margin)} · 已扣返点`)+metric('期末现金结余',`${fmt(r.finalCash)}<small>万元</small>`,'全部收付款结束 · 期初为 0')+metric('最大垫资缺口',`${fmt(r.gap)}<small>万元</small>`,r.gap>0?`首次缺口：节点 ${r.firstGap.node}`:'全程现金余额不低于 0');
@@ -83,9 +84,9 @@ function render(){
 }
 function applyPreset(value){if(value==='custom')return;$('gNode').value=1;$('upDeposit').value=value==='receive'?3:2;$('upTail').value=value==='receive'?5:4;clients.forEach(c=>{c.deposit=value==='receive'?2:3;c.tail=value==='receive'?4:5;});renderClients();render();}
 document.addEventListener('input',e=>{const el=e.target;if(el.dataset.broker){const b=intermediaries.find(b=>b.id===Number(el.dataset.broker));b[el.dataset.key]=el.dataset.key==='name'?el.value:el.value===''?NaN:Number(el.value);render();}else if(el.dataset.client){const c=clients.find(c=>c.id===Number(el.dataset.client));c[el.dataset.key]=el.dataset.key==='name'?el.value:el.value===''?NaN:Number(el.value);if(el.dataset.key==='name')renderGuaranteeInputs();if(['deposit','tail'].includes(el.dataset.key))$('preset').value='custom';render();}else if(upstreamKeys.includes(el.id)){if(['upDeposit','upTail','gNode'].includes(el.id))$('preset').value='custom';render();}});
-document.addEventListener('change',e=>{if(e.target.matches('#app-shell input')){render();}});
+document.addEventListener('change',e=>{if(e.target.dataset.advanceMode){const c=clients.find(c=>c.id===Number(e.target.dataset.advanceMode));c.advanceMode=e.target.value;renderClients();render();return;}if(e.target.matches('#app-shell input')){render();}});
 document.addEventListener('click',e=>{const remove=e.target.closest('[data-remove]');if(remove){clients=clients.filter(c=>c.id!==Number(remove.dataset.remove));renderClients();render();}});
-$('add-client').addEventListener('click',()=>{const q=Math.max(1,Number($('q').value)-clients.reduce((s,c)=>s+(Number.isFinite(c.q)?c.q:0),0));clients.push({id:nextId++,name:'下游 '+String.fromCharCode(65+clients.length%26),p:Number($('p').value)||100,q,x:35,deposit:2,tail:4,guarantee:0});$('preset').value='custom';renderClients();render();});
+$('add-client').addEventListener('click',()=>{const q=Math.max(1,Number($('q').value)-clients.reduce((s,c)=>s+(Number.isFinite(c.q)?c.q:0),0));clients.push({id:nextId++,name:'下游 '+String.fromCharCode(65+clients.length%26),p:Number($('p').value)||100,q,x:35,advanceMode:'auto',deposit:2,tail:4,guarantee:0});$('preset').value='custom';renderClients();render();});
 $('allocation').addEventListener('change',()=>{if($('allocation').value==='manual'&&result&&!result.errors.length){result.clients.forEach(rc=>{clients.find(c=>c.id===rc.id).guarantee=rc.g;});}renderClients();render();});
 $('preset').addEventListener('change',e=>applyPreset(e.target.value));
 renderClients();renderBrokers();render();

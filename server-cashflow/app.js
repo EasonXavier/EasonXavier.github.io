@@ -22,30 +22,31 @@ function adjustment(button){
  const valid=!(scope==='client'&&key==='x'&&item?.advanceMode==='auto')&&Number.isFinite(current)&&Number.isFinite(next)&&next>=min&&next<=max&&(key!=='q'||(Number.isInteger(current)&&Number.isInteger(next)));
  return {scope,key,item,next,valid,id};
 }
-function field(c,key,label,unit='',min=0,max=null,step='any'){return `<label>${esc(label)}<span class="${['p','q','x'].includes(key)?'price-control':''}"><span class="input-unit"><input aria-label="${esc(c.name+' '+label)}" data-client="${c.id}" data-key="${key}" type="number" min="${min}" ${max===null?'':`max="${max}"`} step="${step}" ${key==='x'&&c.advanceMode==='auto'?'readonly aria-readonly="true"':''} value="${Number.isFinite(c[key])?c[key]:''}">${unit?`<span>${unit}</span>`:''}</span>${key==='p'?adjustButtons('client',c.id,5,c.name+' 销售单价'):['q','x'].includes(key)?parameterButtons('client',c.id,key,c.name+' '+label):''}</span></label>`;}
+function field(c,key,label,unit='',min=0,max=null,step='any'){return `<label class="${key==='x'&&c.advanceMode==='auto'?'computed-field':''}">${esc(label)}<span class="${['p','q','x'].includes(key)?'price-control':''}"><span class="input-unit"><input aria-label="${esc(c.name+' '+label)}" data-client="${c.id}" data-key="${key}" type="number" min="${min}" ${max===null?'':`max="${max}"`} step="${step}" ${key==='x'&&c.advanceMode==='auto'?'readonly aria-readonly="true"':''} value="${Number.isFinite(c[key])?c[key]:''}">${unit?`<span>${unit}</span>`:''}</span>${key==='p'?adjustButtons('client',c.id,5,c.name+' 销售单价'):['q','x'].includes(key)?parameterButtons('client',c.id,key,c.name+' '+label):''}</span></label>`;}
 function renderBrokers(){
  $('intermediaries').innerHTML=intermediaries.map((b,i)=>`<article class="broker"><div class="client-head"><input class="client-name" aria-label="居间方 ${i+1} 名称" data-broker="${b.id}" data-key="name" maxlength="40" value="${esc(b.name)}"><button class="remove" data-remove-broker="${b.id}" aria-label="删除${esc(b.name)}">移除</button></div><label>每台返点<span class="price-control"><span class="input-unit"><input type="number" aria-label="${esc(b.name)} 每台返点" data-broker="${b.id}" data-key="rate" value="${Number.isFinite(b.rate)?b.rate:''}" min="0" max="1000000000" step="any"><span>万元/台</span></span>${adjustButtons('broker',b.id,1,b.name+' 每台返点')}</span></label><div class="summary-lines" id="broker-summary-${b.id}"></div></article>`).join('')||'<p class="hint">未设置居间方，返点为 0。</p>';
  $('add-broker').disabled=intermediaries.length>=20;
 }
 function syncSteppers(){document.querySelectorAll('[data-adjust]').forEach(button=>{button.disabled=!adjustment(button).valid;});}
 function renderClients(){
- $('clients').innerHTML=clients.length?clients.map((c,i)=>`<article class="client" data-id="${c.id}"><div class="client-head"><div class="client-identity"><span class="client-badge">${String(i+1).padStart(2,'0')}</span><input class="client-name" aria-label="客户 ${i+1} 名称" data-client="${c.id}" data-key="name" maxlength="40" value="${esc(c.name)}"></div><button class="remove" data-remove="${c.id}" aria-label="删除${esc(c.name)}">移除</button></div><div class="client-fields">${field(c,'p','销售单价 Pd','',0.000001)}${field(c,'q','数量 Qd','台',1,1000000,1)}<div class="advance-fields"><label>预付款方式<select data-advance-mode="${c.id}" aria-label="${esc(c.name)} 预付款方式"><option value="auto" ${c.advanceMode==='auto'?'selected':''}>自动：n − m</option><option value="manual" ${c.advanceMode!=='auto'?'selected':''}>手动设置</option></select></label>${field(c,'x','预付款 xd','%',0,100,.1)}<small id="advance-note-${c.id}" class="hint"></small></div>${field(c,'deposit','收预付款节点','',1,999,1)}${field(c,'tail','收尾款节点','',1,999,1)}</div><div class="client-meta" id="client-meta-${c.id}"></div></article>`).join(''):'<div class="empty">暂无下游客户，点击“添加客户”开始分配销售数量。</div>';
+ $('clients').innerHTML=clients.length?clients.map((c,i)=>`<article class="client" data-id="${c.id}"><div class="client-head"><div class="client-identity"><span class="client-badge">${String(i+1).padStart(2,'0')}</span><input class="client-name" aria-label="客户 ${i+1} 名称" data-client="${c.id}" data-key="name" maxlength="40" value="${esc(c.name)}"></div><button class="remove" data-remove="${c.id}" aria-label="删除${esc(c.name)}">移除</button></div><div class="client-fields">${field(c,'p','销售单价','万元/台',0.000001)}${field(c,'q','销售数量','台',1,1000000,1)}<div class="advance-fields"><label>预付款方式<select data-advance-mode="${c.id}" aria-label="${esc(c.name)} 预付款方式"><option value="auto" ${c.advanceMode==='auto'?'selected':''}>自动：n − m</option><option value="manual" ${c.advanceMode!=='auto'?'selected':''}>手动设置</option></select></label>${field(c,'x','预付款比例','%',0,100,.1)}<small id="advance-note-${c.id}" class="advance-formula"></small></div>${field(c,'deposit','收预付款节点','',1,999,1)}${field(c,'tail','收尾款节点','',1,999,1)}</div><div class="client-meta" id="client-meta-${c.id}"></div></article>`).join(''):'<div class="empty">暂无下游客户，点击“添加客户”开始分配销售数量。</div>';
  renderGuaranteeInputs();
 }
 function renderGuaranteeInputs(){
  $('guarantee-inputs').innerHTML=$('allocation').value==='manual'?clients.map(c=>field(c,'guarantee',c.name+' · 分配额度','万元')).join(''):'';
 }
+function liveStat(label,value,note,tone=''){return `<div class="live-item"><span>${label}</span><strong class="${tone}">${value}</strong><small>${note}</small></div>`;}
 function metric(label,value,note,featured=false,bad=false){return `<div class="metric ${featured?'featured':''} ${bad?'bad':''}"><div class="metric-label">${label}</div><div class="metric-value">${value}</div><div class="metric-note">${note}</div></div>`;}
 function line(a,b){return `<div><span>${a}</span><strong>${b}</strong></div>`;}
 function clearResults(errors){
- $('metrics').innerHTML=metric('方案状态','待修正输入','修正后自动重新计算',true,true)+metric('已售合同利润','—','万元')+metric('期末现金结余','—','万元')+metric('最大垫资缺口','—','不允许垫资');
+ $('metrics').innerHTML=metric('采购总额','—','万元')+metric('销售总额','—','万元')+metric('返点总额','—','万元')+metric('销售数量','—','台');
  $('alerts').innerHTML=`<div class="alert danger" role="alert"><ul>${errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`;
- ['event-detail','chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary','broker-total'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta, .broker .summary-lines, [id^="advance-note-"]').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';$('guarantee-table').querySelector('tbody').innerHTML='';result=null;setRiskTone(false,true);
+ ['event-detail','chart','cash-summary','reconcile','upstream-summary','guarantee-summary','quantity-summary','broker-total'].forEach(id=>$(id).innerHTML='');document.querySelectorAll('.client-meta, .broker .summary-lines, [id^="advance-note-"]').forEach(e=>e.textContent='');$('timeline').querySelector('tbody').innerHTML='';$('profit').querySelector('tbody').innerHTML='';$('guarantee-table').querySelector('tbody').innerHTML='';result=null;setRiskTone(false,true);$('live-summary').innerHTML=liveStat('预付款收付净额','—','待修正输入')+liveStat('全部结算后现金余额','—','待修正输入')+liveStat('交易利润','—','待修正输入')+liveStat('零垫资检验','待修正','请检查交易条件','negative');
 }
 let chartMode='balance',selectedEvent=-1,pendingImport=null;
 function drawChart(r){
  if(selectedEvent>=r.events.length)selectedEvent=-1;
- $('chart').innerHTML=TradeCharts.render(r,chartMode,selectedEvent);
+ $('chart').innerHTML=TradeCharts.render(r,chartMode,selectedEvent,$('chart').clientWidth||760);
  $('chart-legend').innerHTML=chartMode==='balance'?'<span><i class="legend-dot balance"></i>余额</span><span><i class="legend-dot deficit"></i>资金缺口</span>':'<span><i class="legend-dot balance"></i>收款</span><span><i class="legend-dot upstream"></i>付上游</span><span><i class="legend-dot rebate"></i>返点</span>';
  document.querySelectorAll('[data-chart-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chartMode===chartMode)));
  showEventDetail(r);
@@ -59,16 +60,16 @@ function setRiskTone(deficit,invalid=false){$('app-shell').classList.toggle('fun
 function render(){
  const s=state(),r=TradeModel.calculate(s);result=r;
  if(r.errors.length){syncSteppers();clearResults(r.errors);return;}
- r.clients.forEach(rc=>{const c=clients.find(c=>c.id===rc.id);if(c.advanceMode==='auto'){c.x=rc.x;const input=document.querySelector(`[data-client="${c.id}"][data-key="x"]`);if(input)input.value=rc.x;}$('advance-note-'+c.id).textContent=c.advanceMode==='auto'?`n ${pct(rc.guaranteeSalesRate)} − m ${s.advanceMargin.toFixed(1)} 个百分点 → ${rc.x.toFixed(1)}%`:'按手动设置的比例收款';});
+ r.clients.forEach(rc=>{const c=clients.find(c=>c.id===rc.id);if(c.advanceMode==='auto'){c.x=rc.x;const input=document.querySelector(`[data-client="${c.id}"][data-key="x"]`);if(input)input.value=rc.x;}$('advance-note-'+c.id).innerHTML=c.advanceMode==='auto'?`<span>实际保函 <b>${pct(rc.guaranteeSalesRate)}</b></span><span class="formula-sign">−</span><span>差额 <b>${s.advanceMargin.toFixed(1)}</b> 个百分点</span><span class="formula-sign">→</span><strong>${rc.x.toFixed(1)}%</strong>`:'手动比例不随保函和差额变化';});
  syncSteppers();
  setRiskTone(r.gap>0,r.sequenceErrors.length>0);
- let status=r.gap>0?'需要垫资':r.sequenceErrors.length?'顺序待调整':'满足零垫资';
- $('metrics').innerHTML=metric('方案状态',status,r.gap>0?'方案不可执行 · 请调整收付款条件':r.sequenceErrors.length?'先保函，后付款':'按当前节点顺序测算',true,!r.feasible)+metric('已售合同交易利润',`${fmt(r.profit)}<small>万元</small>`,`利润率 ${pct(r.margin)} · 已扣返点`)+metric('期末现金结余',`${fmt(r.finalCash)}<small>万元</small>`,'全部收付款结束 · 期初为 0')+metric('最大垫资缺口',`${fmt(r.gap)}<small>万元</small>`,r.gap>0?`首次缺口：节点 ${r.firstGap.node}`:'全程现金余额不低于 0');
+ $('metrics').innerHTML=metric('采购总额',`${fmt(r.cost)}<small>万元</small>`,`${s.q} 台 · 单价 ${fmt(s.p)} 万元`)+metric('销售总额',`${fmt(r.sales)}<small>万元</small>`,`${r.clients.length} 位下游客户`)+metric('返点总额',`${fmt(r.rebates)}<small>万元</small>`,`${r.intermediaries.length} 位居间方 · 随回款支付`)+metric('已售数量',`${r.soldQ}<small>/ ${s.q} 台</small>`,r.inventory?'未售库存成本 '+fmt(r.inventory)+' 万元':'本批次已全部分配');
  const alerts=[];
  if(r.gap>0)alerts.push(`<div class="alert danger"><span><strong>不满足零垫资：</strong>节点 ${r.firstGap.node}「${esc(r.firstGap.label)}」后首次缺口 ${fmt(-r.firstGap.balance)} 万元，最大缺口 ${fmt(r.gap)} 万元。</span></div>`);
  if(r.sequenceErrors.length)alerts.push(`<div class="alert danger">${esc(r.sequenceErrors.join('；'))}</div>`);
  if(r.warnings.length)alerts.push(`<div class="alert"><ul>${r.warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`);
  $('alerts').innerHTML=alerts.join('');
+ $('live-summary').innerHTML=liveStat('预付款收付净额',fmt(r.depositNet),'万元 · 扣除首期返点和上游预付款',color(r.depositNet))+liveStat('全部结算后现金余额',fmt(r.finalCash),'万元 · 全部货款与返点结清',color(r.finalCash))+liveStat('交易利润',fmt(r.profit),'万元 · 已扣全部居间返点',color(r.profit))+liveStat('零垫资检验',r.gap>0?'缺口 '+fmt(r.gap):r.feasible?'满足零垫资':'顺序待调整',r.gap>0?'万元 · 最大资金缺口':r.feasible?'全程现金余额不低于 0':'请先交付保函',r.feasible?'positive':'negative');
  $('upstream-summary').innerHTML=line('采购总额',fmt(r.cost))+line('应付预付款',fmt(r.upfront))+line('应付尾款',fmt(TradeModel.money(r.cost-r.upfront)));
  $('guarantee-summary').innerHTML=line('保函总额度',fmt(r.guarantee))+line('已分配额度',fmt(r.allocated))+line('保留额度',fmt(r.unallocated));
  $('quantity-summary').textContent=`已分配 ${r.soldQ} / ${s.q} 台 · ${clients.length} 位客户`;
@@ -114,3 +115,5 @@ document.addEventListener('click',e=>{
  else {item[key]=next;const input=document.querySelector(scope==='broker'?`[data-broker="${id}"][data-key="${key}"]`:`[data-client="${id}"][data-key="${key}"]`);if(input)input.value=next;}
  render();
 });
+
+if(typeof ResizeObserver!=='undefined'){let chartWidth=0;new ResizeObserver(entries=>{const width=Math.round(entries[0].contentRect.width);if(width>0&&width!==chartWidth){chartWidth=width;if(result&&!result.errors.length)drawChart(result);}}).observe($('chart'));}

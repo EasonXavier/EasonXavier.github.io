@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>服务器交易 · 现金流测算</title>
-<meta name="application-version" content="0.4.0">
+<meta name="application-version" content="0.5.0">
 <meta name="description" content="测算服务器采购与多客户销售的预付款、保函、居间返点、阶段现金流与交易利润。">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23163044'/%3E%3Cpath d='M7 23V15h4v8m3 0V9h4v14m3 0V5h4v18' fill='%235dd2b4'/%3E%3C/svg%3E">
-<script src="./theme.js?v=0.4.0">
+<script src="./theme.js?v=0.5.0">
 </script>
-<link rel="stylesheet" href="./style.css?v=0.4.0">
-<script defer src="./model.js?v=0.4.0">
+<link rel="stylesheet" href="./style.css?v=0.5.0">
+<script defer src="./model.js?v=0.5.0">
 </script>
-<script defer src="./data.js?v=0.4.0">
+<script defer src="./data.js?v=0.5.0">
 </script>
-<script defer src="./charts.js?v=0.4.0">
+<script defer src="./charts.js?v=0.5.0">
 </script>
-<script defer src="./app.js?v=0.4.0">
+<script defer src="./app.js?v=0.5.0">
 </script>
-<script defer src="./access.js?v=0.4.0">
+<script defer src="./access.js?v=0.5.0">
 </script>
 </head>
 <body>
@@ -50,22 +50,24 @@
 <div class="header-meta">
 <a href="../">返回 Portal</a>
 <button type="button" class="secondary" data-theme-toggle>浅色模式</button>
-<button type="button" id="lock-page" class="secondary">锁定</button>人民币 · 万元<span class="tag">v0.4.0</span>
+<button type="button" id="lock-page" class="secondary">锁定</button><span class="currency-note">人民币 · 万元</span><span class="tag">v0.5.0</span>
 </div>
 </header>
+<div class="status-dock" aria-label="全局资金指标"><div id="live-summary" role="status" aria-live="polite"></div></div>
 <main>
 <div class="title-row">
 <div>
-<h1>交易测算</h1>
-<p>采购 · 销售 · 保函 · 资金计划</p>
+<h1>交易与资金计划</h1>
+<p>调整交易条件，实时查看现金余额与收益。</p>
 </div>
 <div class="toolbar">
-<button id="open-import" class="primary">导入 JSON</button>
-<button id="export-json" class="secondary">导出数据</button>
+<button id="open-import" class="secondary">导入 JSON</button>
+<button id="export-json" class="primary">导出方案</button>
 <a href="./template.json" download="server-trade-template.json" class="secondary">下载模板</a>
 <a href="#rules" class="text-link">计算口径</a>
 </div>
 </div>
+<nav class="section-nav" aria-label="页面分区"><a href="#cash-visual">现金流</a><a href="#trade-inputs">交易条件</a><a href="#broker-panel">居间返点</a><a href="#profit-panel">收益明细</a></nav>
 <p id="data-status" class="data-status" role="status">
 </p>
 <section id="cash-visual" class="panel cash-panel">
@@ -91,25 +93,25 @@
 </div>
 <section id="metrics" class="metrics" aria-live="polite"></section>
 </section>
-<div class="workspace">
+<div class="workspace" id="trade-inputs">
 <aside>
 <section class="panel upstream">
 <div class="section-title">
 <h2>
 <span class="section-no">01</span>上游采购</h2>
-<span class="tiny">单一采购批次</span>
+<span class="tiny">金额：万元</span>
 </div>
 <div class="fields">
-<label>采购单价 P1<span class="price-control"><span class="input-unit">
+<label>采购单价<span class="price-control"><span class="input-unit">
 <input id="p" type="number" value="1390" min="0.000001" step="any">
 <span>万元/台</span>
 </span><span class="adjust-buttons"><button type="button" data-adjust="procurement" data-delta="-5" aria-label="采购单价减少 5 万元">−5</button><button type="button" data-adjust="procurement" data-delta="5" aria-label="采购单价增加 5 万元">+5</button></span></span>
 </label>
-<label>采购数量 Q1<span class="price-control"><span class="input-unit">
+<label>采购数量<span class="price-control"><span class="input-unit">
 <input id="q" type="number" value="128" min="1" max="1000000" step="1"><span>台</span></span><span class="adjust-buttons"><button type="button" data-adjust="procurement" data-adjust-key="q" data-factor="0.5" aria-label="采购数量除以 2" title="数量须为偶数，除以 2 后至少为 1 台">÷2</button><button type="button" data-adjust="procurement" data-adjust-key="q" data-factor="2" aria-label="采购数量乘以 2">×2</button></span></span></label>
-<label>预付款比例 x1<span class="price-control"><span class="input-unit">
+<label>上游预付款比例<span class="price-control"><span class="input-unit">
 <input id="x" type="number" value="30" min="0" max="100" step="0.1"><span>%</span></span><span class="adjust-buttons"><button type="button" data-adjust="procurement" data-adjust-key="x" data-delta="-0.1" aria-label="上游预付款比例减少 0.1 个百分点">−0.1</button><button type="button" data-adjust="procurement" data-adjust-key="x" data-delta="0.1" aria-label="上游预付款比例增加 0.1 个百分点">+0.1</button></span></span></label>
-<label>保函比例 y1<span class="input-unit">
+<label>上游保函比例<span class="input-unit">
 <input id="y" type="number" value="35" min="0" step="any">
 <span>%</span>
 </span>
@@ -119,7 +121,7 @@
 </div>
 <div class="divider">
 </div>
-<h3>资金与付款节点</h3>
+<h3>付款安排</h3>
 <label class="preset-label">结算顺序<select id="preset">
 <option value="receive">先保函，先收后付</option>
 <option value="pay">先付上游，再收下游</option>
@@ -149,14 +151,14 @@
 </span>
 <span>金额单位：万元</span>
 </div>
-<div class="advance-policy"><label>预付款差额 m<span class="price-control"><span class="input-unit"><input id="advanceMargin" type="number" min="0" max="100" step="0.1" value="3"><span>个百分点</span></span><span class="adjust-buttons"><button type="button" data-adjust="procurement" data-adjust-key="advanceMargin" data-delta="-0.1" aria-label="预付款差额减少 0.1 个百分点">−0.1</button><button type="button" data-adjust="procurement" data-adjust-key="advanceMargin" data-delta="0.1" aria-label="预付款差额增加 0.1 个百分点">+0.1</button></span></span></label><p class="hint">默认预付款＝实际保函比例 n − m。n＝分配保函金额 ÷ 销售合同金额；结果四舍五入到 0.1 个百分点，限制在 0%–100%。切换为手动后可直接调整。</p></div>
+<div class="advance-policy"><div class="policy-heading"><strong>下游预付款规则</strong><span>自动联动</span></div><label>预付款差额 m<span class="price-control"><span class="input-unit"><input id="advanceMargin" type="number" min="0" max="100" step="0.1" value="3"><span>个百分点</span></span><span class="adjust-buttons"><button type="button" data-adjust="procurement" data-adjust-key="advanceMargin" data-delta="-0.1" aria-label="预付款差额减少 0.1 个百分点">−0.1</button><button type="button" data-adjust="procurement" data-adjust-key="advanceMargin" data-delta="0.1" aria-label="预付款差额增加 0.1 个百分点">+0.1</button></span></span></label><p class="hint">自动预付款＝实际保函比例 n − 差额 m。修改 m 会同步更新自动模式的客户；预付款保留 1 位小数。</p></div>
 <div id="clients">
 </div>
 </section>
 
 </div>
 </div>
-<section class="panel broker-panel"><div class="section-title"><h2>居间返点</h2><button id="add-broker" class="primary">＋ 添加居间方</button></div><p class="hint">各居间方按全部已售台数计费，每台返点 × 已售台数为应付总额；随对应下游每次回款比例支付。每次调整 1 万元/台，可直接输入小数。</p><p id="broker-total" class="section-sub"></p><div id="intermediaries" class="broker-grid"></div></section>
+<section class="panel broker-panel" id="broker-panel"><div class="section-title"><h2><span class="section-no">03</span>居间返点</h2><button id="add-broker" class="primary">＋ 添加居间方</button></div><p class="hint">各居间方按全部已售台数计费，每台返点 × 已售台数为应付总额；随对应下游每次回款比例支付。每次调整 1 万元/台，可直接输入小数。</p><p id="broker-total" class="section-sub"></p><div id="intermediaries" class="broker-grid"></div></section>
 <details id="guarantee-details" class="panel guarantee-panel">
 <summary><span>保函分配与覆盖</span><span class="summary-hint">展开查看与调整</span></summary>
 <div class="guarantee-body">
@@ -197,7 +199,7 @@
 </div>
 <p class="hint">返点在每次收款时同步支付。回款折算利润＝各客户合同利润 × 累计回款比例之和，仅作阶段收益观察，不代表财务确认利润。</p>
 </div></details>
-<section class="panel profit-panel">
+<section class="panel profit-panel" id="profit-panel">
 <div class="section-title">
 <h2>
 客户收益</h2>
@@ -221,8 +223,8 @@
 <div id="reconcile" class="reconcile">
 </div>
 </section>
-<section id="rules" class="rules">
-<h2>计算口径</h2>
+<details id="rules" class="rules">
+<summary>计算口径与适用范围</summary>
 <div class="rule-grid">
 <div>
 <h3>采购与保函</h3>
@@ -241,12 +243,13 @@
 <p>只要任何时点的累计现金余额＜0，即不满足零垫资条件。缺口＝max(0, −最低累计现金余额)。同一节点内先付上游、再收下游并支付返点，以保守口径检验垫资。假设合同正常履行、两期结清，无税费、融资成本、物流费用、保证金或保函索赔。所有价格须使用相同含税口径；结果不是税后净利润。</p>
 </div>
 </div>
-</section>
+</details>
 <footer>
 <span>金额：万元 · 比例：百分数</span>
 <span>交易数据仅在当前页面处理；刷新前请导出保存。</span>
 </footer>
 </main>
+
 </div>
 <dialog id="import-dialog" aria-labelledby="import-title">
 <div class="section-title">

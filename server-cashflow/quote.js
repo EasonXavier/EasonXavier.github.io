@@ -4,7 +4,7 @@ function build(s,index){
  const model=typeof module!=='undefined'&&module.exports?require('./model.js'):root.TradeModel;
  const r=model.calculate(s);if(r.errors.length)throw new Error(r.errors.join('；'));
  const c=r.clients[index];if(!c)throw new Error('请选择下游客户');
- return {tradeName:s.tradeName||'',name:c.name,unitPrice:c.p,quantity:c.q,sales:c.sales,guarantee:c.g,guaranteeRate:c.guaranteeSalesRate,guaranteeNode:s.gNode,advanceRate:c.x,advance:c.depositCash,balance:c.tailCash,advanceNode:c.deposit,balanceNode:c.tail,rebate:c.b,advanceRebate:c.depositRebate,balanceRebate:c.tailRebate,intermediaries:r.intermediaries.map(b=>({name:b.name,perUnit:b.rate,...b.allocations[index]}))};
+ return {tradeName:s.tradeName||'',name:c.name,unitPrice:c.p,quantity:c.q,sales:c.sales,guarantee:c.g,guaranteeRate:c.guaranteeSalesRate,guaranteeNode:s.gNode,advanceRate:c.x,advance:c.depositCash,balance:c.tailCash,advanceNode:c.deposit,balanceNode:c.tail,rebate:c.b,advanceRebate:c.depositRebate,balanceRebate:c.tailRebate,intermediaries:r.intermediaries.filter(b=>b.allocations[index].bound).map(b=>({name:b.name,perUnit:b.rate,...b.allocations[index]}))};
 }
 function canvas(q){
  const width=960,pad=60,body=width-pad*2,scale=2;

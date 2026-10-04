@@ -19,6 +19,13 @@ function calculate(s){
  s.intermediaries.forEach((b,i)=>num(b.rate,'居间方'+(i+1)+'每台返点'));
  if(!Array.isArray(s.clients))return {errors:['客户数据无效'],warnings:[]};
  s.clients.forEach((c,i)=>{const k='客户'+(i+1)+'：';if(c.advanceMode!==undefined&&!['auto','manual'].includes(c.advanceMode))errors.push(k+'预付款方式无效');num(c.p,k+'销售单价',0.000001);num(c.q,k+'数量',1,1000000,true);if(c.advanceMode!=='auto')num(c.x,k+'预付款比例',0,100);num(c.deposit,k+'收预付款节点',1,999,true);num(c.tail,k+'收尾款节点',1,999,true);if(s.allocation==='manual')num(c.guarantee,k+'保函额度');if(c.tail<c.deposit)errors.push(k+'尾款节点不能早于预付款节点');});
+ const customerIds=s.clients.map((c,i)=>c.id===undefined?i+1:c.id);
+ if(customerIds.some(id=>!Number.isSafeInteger(id)||id<1)||new Set(customerIds).size!==customerIds.length)errors.push('客户 ID 必须为不重复的正整数');
+ s.intermediaries.forEach((b,i)=>{
+  if(b.customerIds===undefined)return;
+  if(!Array.isArray(b.customerIds)||b.customerIds.some(id=>!customerIds.includes(id))||new Set(b.customerIds).size!==b.customerIds.length)errors.push('居间方 '+(i+1)+' 的绑定客户无效：请使用不重复的现有客户 ID');
+  else if(!b.customerIds.length)warnings.push((b.name||'居间方 '+(i+1))+' 未绑定客户，暂不计费。');
+ });
  if(errors.length)return {errors,warnings};
  const cost=money(s.p*s.q), soldQ=sum(s.clients.map(c=>c.q)), guarantee=money(guaranteeBase*s.q*s.y/100);
  if(cost>1e9||sum(s.clients.map(c=>c.p*c.q))>1e9||guarantee>1e9){return {errors:['交易金额超出支持范围（总额上限 10 亿万元）'],warnings};}
@@ -31,11 +38,11 @@ function calculate(s){
   const n=g/money(c.p*c.q)*100,rawAdvance=n-advanceMargin;
   if(c.advanceMode==='auto'&&(rawAdvance<0||rawAdvance>100))warnings.push((c.name||'客户 '+(i+1))+' 的 n−m 超出 0%–100%，预付款已限制为 '+(rawAdvance<0?'0%':'100%')+'。');
   const x=c.advanceMode==='auto'?Math.round(Math.max(0,Math.min(100,rawAdvance))*10)/10:c.x;
-  return {...c,x,g};
+  return {...c,id:customerIds[i],x,g};
  });
  s={...s,clients:resolvedClients};
- const brokerAllocations=s.intermediaries.map(b=>({...b,allocations:s.clients.map(c=>{const total=money(b.rate*c.q),deposit=money(total*c.x/100);return {total,deposit,tail:money(total-deposit)};})}));
- const intermediaries=brokerAllocations.map(b=>({...b,total:sum(b.allocations.map(a=>a.total)),deposit:sum(b.allocations.map(a=>a.deposit)),tail:sum(b.allocations.map(a=>a.tail))}));
+ const brokerAllocations=s.intermediaries.map(b=>({...b,allocations:s.clients.map(c=>{const bound=b.customerIds===undefined||b.customerIds.includes(c.id),quantity=bound?c.q:0,total=money(b.rate*quantity),deposit=money(total*c.x/100);return {customerId:c.id,bound,quantity,total,deposit,tail:money(total-deposit)};})}));
+ const intermediaries=brokerAllocations.map(b=>({...b,quantity:sum(b.allocations.map(a=>a.quantity)),total:sum(b.allocations.map(a=>a.total)),deposit:sum(b.allocations.map(a=>a.deposit)),tail:sum(b.allocations.map(a=>a.tail))}));
  if(sum(intermediaries.map(b=>b.total))>1e9)return {errors:['居间返点总额超出支持范围（上限 10 亿万元）'],warnings};
  const clients=s.clients.map((c,i)=>{
   const b=sum(intermediaries.map(b=>b.allocations[i].total)),depositRebate=sum(intermediaries.map(b=>b.allocations[i].deposit));

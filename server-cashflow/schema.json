@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "服务器交易数据 v2.0",
-  "description": "CNY_10K 表示万元；比例以百分数填写，如 30 表示 30%。同节点先交付保函，再付上游，再收下游并支付返点。 各居间方按每台返点乘已售数量计算，并随对应客户每次回款比例支付。",
+  "description": "CNY_10K 表示万元；比例以百分数填写，如 30 表示 30%。同节点先交付保函，再付上游，再收下游并支付返点。 各居间方按每台返点乘绑定客户的销售数量计算，并随对应客户每次回款比例支付。",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -150,6 +150,12 @@
             ],
             "default": "manual",
             "description": "auto 按保函比例减 m 重算；manual 使用 advanceRate。旧数据省略时保留手动预付款。"
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "稳定且唯一的客户 ID，居间方通过 customerIds 绑定；旧数据省略时按数组位置从 1 分配。"
           }
         }
       }
@@ -175,6 +181,17 @@
             "type": "number",
             "minimum": 0,
             "maximum": 1000000000.0
+          },
+          "customerIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 200,
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "description": "绑定客户 ID。省略时绑定全部客户（含后续新增），空数组表示不绑定；非空数组只绑定列出的客户，所有 ID 必须存在。"
           }
         }
       }

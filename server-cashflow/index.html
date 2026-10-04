@@ -4,24 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>服务器交易 · 现金流测算</title>
-<meta name="application-version" content="0.7.0">
+<meta name="application-version" content="0.8.0">
 <meta name="description" content="测算服务器采购与多客户销售的预付款、保函、居间返点、阶段现金流与交易利润。">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23163044'/%3E%3Cpath d='M7 23V15h4v8m3 0V9h4v14m3 0V5h4v18' fill='%235dd2b4'/%3E%3C/svg%3E">
-<script src="./theme.js?v=0.7.0">
+<script src="./theme.js?v=0.8.0">
 </script>
-<link rel="stylesheet" href="./style.css?v=0.7.0">
-<script defer src="./model.js?v=0.7.0">
+<link rel="stylesheet" href="./style.css?v=0.8.0">
+<script defer src="./model.js?v=0.8.0">
 </script>
-<script defer src="./data.js?v=0.7.0">
+<script defer src="./data.js?v=0.8.0">
 </script>
-<script defer src="./charts.js?v=0.7.0">
+<script defer src="./charts.js?v=0.8.0">
 </script>
-<script defer src="./quote.js?v=0.7.0"></script>
-<script defer src="./app.js?v=0.7.0">
+<script defer src="./quote.js?v=0.8.0"></script>
+<script defer src="./app.js?v=0.8.0">
 </script>
-<script defer src="./plans.js?v=0.7.0"></script>
-<script defer src="./plans-ui.js?v=0.7.0"></script>
-<script defer src="./access.js?v=0.7.0">
+<script defer src="./plans.js?v=0.8.0"></script>
+<script defer src="./plans-ui.js?v=0.8.0"></script>
+<script defer src="./access.js?v=0.8.0">
 </script>
 </head>
 <body>
@@ -53,7 +53,7 @@
 <div class="header-meta">
 <a href="../">返回 Portal</a>
 <button type="button" class="secondary" data-theme-toggle>浅色模式</button>
-<button type="button" id="lock-page" class="secondary">锁定</button><span class="currency-note">人民币 · 万元</span><span class="tag">v0.7.0</span>
+<button type="button" id="lock-page" class="secondary">锁定</button><span class="currency-note">人民币 · 万元</span><span class="tag">v0.8.0</span>
 </div>
 </header>
 <div class="status-dock" aria-label="全局资金指标"><div id="live-summary" role="status" aria-live="polite"></div></div>
@@ -165,7 +165,7 @@
 
 </div>
 </div>
-<section class="panel broker-panel" id="broker-panel"><div class="section-title"><h2><span class="section-no">03</span>居间返点</h2><button id="add-broker" class="primary">＋ 添加居间方</button></div><p class="hint">各居间方按全部已售台数计费，每台返点 × 已售台数为应付总额；随对应下游每次回款比例支付。每次调整 1 万元/台，可直接输入小数。</p><p id="broker-total" class="section-sub"></p><div id="intermediaries" class="broker-grid"></div></section>
+<section class="panel broker-panel" id="broker-panel"><div class="section-title"><h2><span class="section-no">03</span>居间返点</h2><button id="add-broker" class="primary">＋ 添加居间方</button></div><p class="hint">每位居间方可绑定一个或多个下游客户。返点总额＝每台返点 × 绑定客户销售台数，仅随绑定客户的回款比例支付；同一客户绑定多位居间方时分别计费。每次调整 1 万元/台，可直接输入小数。</p><p id="broker-total" class="section-sub"></p><div id="intermediaries" class="broker-grid"></div></section>
 <details id="guarantee-details" class="panel guarantee-panel">
 <summary><span>保函分配与覆盖</span><span class="summary-hint">展开查看与调整</span></summary>
 <div class="guarantee-body">
@@ -239,7 +239,7 @@
 </div>
 <div>
 <h3>回款与返点</h3>
-<p>客户销售额 Si＝Pdi × Qdi；预付款＝Si × xdi%。居间方 j 的返点总额＝每台返点 Rj × 已售台数。每次客户回款时支付 ΣRj × 该客户台数 × 本次收款比例；尾款支付剩余返点，全部回款后结清。</p>
+<p>客户销售额 Si＝Pdi × Qdi；预付款＝Si × xdi%。居间方 j 的返点总额＝每台返点 Rj × 其绑定客户的销售台数之和。每次客户回款时，仅向绑定该客户的居间方支付：每台返点 × 该客户台数 × 本次收款比例；尾款支付剩余返点，全部回款后结清。</p>
 </div>
 <div>
 <h3>收益与库存</h3>

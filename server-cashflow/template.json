@@ -28,7 +28,8 @@
       "advanceRate": 29.4,
       "advanceNode": 2,
       "balanceNode": 4,
-      "advanceMode": "auto"
+      "advanceMode": "auto",
+      "id": 1
     }
   ],
   "advanceMarginPoints": 3,

@@ -9,26 +9,45 @@
   <style>
     :root{color-scheme:dark;--bg:#0b111c;--surface:#111b29;--surface2:#162235;--edge:#27364b;--text:#eff5fc;--muted:#90a2bc;--cyan:#65dbe8;--green:#9af3be;--orange:#fbbf7a;--red:#fc9d9c;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",sans-serif}
     *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:radial-gradient(ellipse at top right,#17304a 0,transparent 43%),var(--bg);color:var(--text);line-height:1.55;min-height:100dvh;-webkit-tap-highlight-color:transparent}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.36;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-    .app{max-width:950px;margin:auto;padding:30px 22px calc(42px + env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:start;gap:12px;margin:0 0 26px}.eyebrow{color:var(--cyan);font-weight:750;letter-spacing:.19em;font-size:11px}h1{font-size:clamp(28px,5vw,38px);letter-spacing:-.06em;line-height:1.14;margin:9px 0 8px;font-weight:730}header p{color:var(--muted);margin:0;font-size:13px;max-width:510px}.pill{background:#163b40;color:#9af3c9;border:1px solid #2b665f;border-radius:50px;white-space:nowrap;padding:6px 10px;font-size:11px;font-weight:650}.stack{display:grid;gap:16px}.card{border:1px solid var(--edge);border-radius:20px;background:linear-gradient(150deg,rgba(24,38,56,.94),rgba(13,22,36,.96));padding:21px;box-shadow:0 12px 38px #0001}.cardTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.cardTitle h2{font-size:15px;margin:0;letter-spacing:-.01em}.micro{font-size:11px;color:var(--muted)}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.spaced{justify-content:space-between}.btn{border:1px solid var(--edge);background:var(--surface2);border-radius:11px;color:var(--text);padding:12px 15px;min-height:44px;font-size:13px;font-weight:700}.btn.primary{color:#06181f;background:var(--cyan);border-color:var(--cyan)}.btn.warn{border-color:#66413b;background:#392728;color:#ffd0c0}.btn.small{padding:8px 12px;min-height:36px;font-weight:650;font-size:12px}.btn.ghost{background:transparent}.tabs{display:flex;gap:5px;padding:5px;background:#0b1522;border:1px solid var(--edge);border-radius:12px;margin:16px 0 0}.tab{border:0;border-radius:8px;background:transparent;color:var(--muted);padding:11px 15px;font-size:13px;flex:1;font-weight:690}.tab.active{background:#23394c;color:var(--text)}.statusRow{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#68778c;box-shadow:0 0 0 4px #68778c18;flex:none}.dot.on{background:var(--green);box-shadow:0 0 0 4px #9af3be22}.dot.busy{background:var(--cyan);box-shadow:0 0 0 4px #65dbe822}.dot.error{background:var(--red)}.meter{height:7px;border-radius:20px;background:#0b1522;overflow:hidden;border:1px solid #25364a}.meter div{height:100%;background:linear-gradient(90deg,#287c8c,#6be2ef,#f2ba72);width:0%;transition:width .12s}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:13px 14px;background:#101c2b;border:1px solid #273648;border-radius:12px}.stat .key{font-size:11px;color:var(--muted)}.stat .val{font-size:19px;letter-spacing:-.025em;font-variant-numeric:tabular-nums;font-weight:680;margin-top:1px}.progress{height:6px;background:#0a1320;border-radius:9px;overflow:hidden;margin:12px 0}.progress div{height:100%;width:0;background:var(--cyan);transition:width .2s}.options{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}.field select,.field input[type=range]{width:100%}.field select{appearance:none;background:#0d1826;color:var(--text);border:1px solid #324459;border-radius:10px;padding:10px 13px;min-height:43px}.field input[type=range]{accent-color:var(--cyan);margin:12px 0 2px}.field .assist{font-size:11px;color:var(--muted)}.plotwrap{position:relative;width:100%;height:clamp(280px,51vw,385px);margin:0}.plotwrap canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:8px 0 2px}.linekey{display:inline-block;width:17px;height:3px;vertical-align:middle;margin-right:6px;border-radius:6px;background:var(--cyan)}.linekey.ref{background:#c4b0ff}.linekey.delta{background:var(--green)}.chartNotice{font-size:12px;color:var(--muted);margin-top:10px}.insight{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chip{font-size:12px;background:#132333;border:1px solid #2b4254;color:#cad7e8;border-radius:10px;padding:8px 10px}.chip b{color:var(--text)}.chip.orange b{color:var(--orange)}.alert{padding:13px 15px;background:#291f22;color:#f9c5ae;border-left:3px solid #d9896b;border-radius:7px;font-size:12px;line-height:1.7;margin-top:12px}.hint{color:var(--muted);font-size:12px;line-height:1.85}.hint strong{color:var(--text)}.hide{display:none!important}footer{color:#71839e;font-size:11px;margin-top:22px}.liveNote{font-size:12px;color:var(--muted)}.tiny{font-size:11px;color:var(--muted)}a{color:var(--cyan)}
+    .app{max-width:950px;margin:auto;padding:30px 22px calc(42px + env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:start;gap:12px;margin:0 0 26px}.eyebrow{color:var(--cyan);font-weight:750;letter-spacing:.19em;font-size:11px}h1{font-size:clamp(28px,5vw,38px);letter-spacing:-.06em;line-height:1.14;margin:9px 0 8px;font-weight:730}header p{color:var(--muted);margin:0;font-size:13px;max-width:510px}.pill{background:#163b40;color:#9af3c9;border:1px solid #2b665f;border-radius:50px;white-space:nowrap;padding:6px 10px;font-size:11px;font-weight:650}.stack{display:grid;gap:16px}.card{border:1px solid var(--edge);border-radius:20px;background:linear-gradient(150deg,rgba(24,38,56,.94),rgba(13,22,36,.96));padding:21px;box-shadow:0 12px 38px #0001}.cardTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.cardTitle h2{font-size:15px;margin:0;letter-spacing:-.01em}.micro{font-size:11px;color:var(--muted)}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.spaced{justify-content:space-between}.btn{border:1px solid var(--edge);background:var(--surface2);border-radius:11px;color:var(--text);padding:12px 15px;min-height:44px;font-size:13px;font-weight:700}.btn.primary{color:#06181f;background:var(--cyan);border-color:var(--cyan)}.btn.warn{border-color:#66413b;background:#392728;color:#ffd0c0}.btn.small{padding:8px 12px;min-height:36px;font-weight:650;font-size:12px}.btn.ghost{background:transparent}.tabs{display:flex;gap:5px;padding:5px;background:#0b1522;border:1px solid var(--edge);border-radius:12px;margin:16px 0 0}.tab{border:0;border-radius:8px;background:transparent;color:var(--muted);padding:11px 15px;font-size:13px;flex:1;font-weight:690}.tab.active{background:#23394c;color:var(--text)}.statusRow{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#68778c;box-shadow:0 0 0 4px #68778c18;flex:none}.dot.on{background:var(--green);box-shadow:0 0 0 4px #9af3be22}.dot.busy{background:var(--cyan);box-shadow:0 0 0 4px #65dbe822}.dot.error{background:var(--red)}.meter{height:7px;border-radius:20px;background:#0b1522;overflow:hidden;border:1px solid #25364a}.meter div{height:100%;background:linear-gradient(90deg,#287c8c,#6be2ef,#f2ba72);width:0%;transition:width .12s}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:13px 14px;background:#101c2b;border:1px solid #273648;border-radius:12px}.stat .key{font-size:11px;color:var(--muted)}.stat .val{font-size:19px;letter-spacing:-.025em;font-variant-numeric:tabular-nums;font-weight:680;margin-top:1px}.progress{height:6px;background:#0a1320;border-radius:9px;overflow:hidden;margin:12px 0}.progress div{height:100%;width:0;background:var(--cyan);transition:width .2s}.options{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}.field select,.field input[type=range]{width:100%}.field select{appearance:none;background:#0d1826;color:var(--text);border:1px solid #324459;border-radius:10px;padding:10px 13px;min-height:43px}.field input[type=range]{accent-color:var(--cyan);margin:12px 0 2px}.field .assist{font-size:11px;color:var(--muted)}.plotwrap{position:relative;width:100%;height:clamp(280px,51vw,385px);margin:0}.plotwrap canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:8px 0 2px}.linekey{display:inline-block;width:17px;height:3px;vertical-align:middle;margin-right:6px;border-radius:6px;background:var(--cyan)}.linekey.ref{background:#c4b0ff}.linekey.delta{background:var(--green)}.chartNotice{font-size:12px;color:var(--muted);margin-top:10px}.insight{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chip{font-size:12px;background:#132333;border:1px solid #2b4254;color:#cad7e8;border-radius:10px;padding:8px 10px}.chip b{color:var(--text)}.chip.orange b{color:var(--orange)}.roleDescription{margin:10px 0 0}.roleNote{margin:12px 0 0;padding:12px 13px;background:#102b32;border:1px solid #20535c;border-radius:11px;font-size:12px;color:#c5eaf0}.dualDisplay{font-variant-numeric:tabular-nums;font-weight:700;font-size:20px;color:var(--cyan);margin-top:9px}.alert{padding:13px 15px;background:#291f22;color:#f9c5ae;border-left:3px solid #d9896b;border-radius:7px;font-size:12px;line-height:1.7;margin-top:12px}.hint{color:var(--muted);font-size:12px;line-height:1.85}.hint strong{color:var(--text)}.hide{display:none!important}footer{color:#71839e;font-size:11px;margin-top:22px}.liveNote{font-size:12px;color:var(--muted)}.tiny{font-size:11px;color:var(--muted)}a{color:var(--cyan)}
     @media(max-width:590px){.app{padding:22px 14px calc(35px + env(safe-area-inset-bottom))}.card{padding:17px 14px;border-radius:17px}h1{font-size:30px}.pill{font-size:10px}.meta{gap:7px}.stat{padding:10px 9px}.stat .val{font-size:17px}.options{gap:12px}.btn{padding:11px 13px}.row.actions{display:grid;grid-template-columns:1fr 1fr}.row.actions .btn:last-child:nth-child(3){grid-column:span 2}.plotwrap{height:310px}}
   </style>
 </head>
 <body>
 <main class="app">
-  <header><div><div class="eyebrow">ACOUSTIC LAB / WEB AUDIO</div><h1>频响测试器<span style="color:var(--cyan)">.</span></h1><p>把 iPhone 当作简易测试麦克风。扫频分析、实时 RTA 与信号发生器，所有音频仅在浏览器本地处理。</p></div><div class="pill">LOCAL · v1.0</div></header>
+  <header><div><div class="eyebrow">ACOUSTIC LAB / WEB AUDIO</div><h1>频响测试器<span style="color:var(--cyan)">.</span></h1><p>把 iPhone 当作简易测试麦克风。扫频分析、实时 RTA 与信号发生器，所有音频仅在浏览器本地处理。</p></div><div class="pill">LOCAL · v1.1</div></header>
   <section class="stack">
     <div class="card">
+      <div class="cardTitle"><h2>00 / 设备角色</h2><span class="micro">单机或双机</span></div>
+      <div class="tabs" role="group" aria-label="设备角色" style="margin-top:0"><button id="roleSingle" class="tab active">单机测试</button><button id="rolePlayer" class="tab">播放端</button><button id="roleReceiver" class="tab">收音端</button></div>
+      <p class="hint roleDescription" id="roleDescription">单机模式会同时开启扬声器与麦克风；iOS 可能将音频路由至听筒。推荐双机测量。</p>
+    </div>
+    <div class="card hide" id="dualCard">
+      <div class="cardTitle"><h2>双机自动扫频</h2><span class="micro">同步信标 · 40 Hz–16 kHz</span></div>
+      <div class="roleNote">固定测试协议：先播放 1.8 kHz 同步提示音，再逐频点播放 40 Hz–16 kHz；每个频点 1.3 秒，完整测试约 38 秒。<strong>先在收音端点击「准备收音」，再在播放端点击「播放扫频」。</strong>两台设备都需保持页面前台。</div>
+      <div id="dualPlayerControls" class="hide">
+        <p class="hint">本设备只负责播放，<strong>不会开启麦克风</strong>。先用 iOS 控制中心的音频输出按钮选择蓝牙音箱或 AirPlay，也可使用已接线的电脑播放。蓝牙设备应在开始播放前连接并选择好。</p>
+        <div class="row"><button id="pairPlay" class="btn primary">播放双机扫频</button><button id="pairStop" class="btn warn" disabled>停止播放</button></div>
+        <div class="dualDisplay" id="pairPlayFreq">准备播放</div><div class="progress"><div id="pairPlayBar"></div></div><span class="tiny" id="pairPlayState">播放设备不需要麦克风权限</span>
+      </div>
+      <div id="dualReceiverControls" class="hide">
+        <p class="hint">把 iPhone 固定在听音位置并使用内置麦克风。开启等待后，本页会自动识别播放端的 1.8 kHz 同步信标，再自动采集整段扫频。<strong>不要使用蓝牙耳机的麦克风作为测量输入。</strong></p>
+        <div class="row"><button id="pairListen" class="btn primary">准备收音 · 自动同步</button><button id="pairCancel" class="btn warn" disabled>取消收音</button></div>
+        <div class="dualDisplay" id="pairRecordState">尚未开始</div><div class="progress"><div id="pairRecordBar"></div></div><span class="tiny" id="pairRecordDetail">收音端不播放任何测试音</span>
+      </div>
+    </div>
+    <div class="card" id="micCard">
       <div class="cardTitle"><h2>01 / 麦克风与采集</h2><span class="micro" id="sampleRate">等待授权</span></div>
       <div class="statusRow"><i class="dot" id="statusDot"></i><span id="statusText" role="status" aria-live="polite">尚未启用麦克风</span></div>
       <div class="row"><button class="btn primary" id="micBtn">启用麦克风</button><span class="tiny" id="deviceLabel">需要 HTTPS 和麦克风权限</span></div>
       <div style="margin-top:17px"><div class="row spaced" style="margin-bottom:7px"><span class="micro">输入电平（dBFS，非声压级）</span><span class="micro" id="inputLevel">—</span></div><div class="meter"><div id="meterFill"></div></div></div>
       <div class="alert hide" id="alert" role="alert"></div>
     </div>
-    <div class="card">
+    <div class="card" id="analysisCard">
       <div class="cardTitle"><h2>02 / 分析模式</h2><span class="micro">未校准 · 相对测量</span></div>
       <div class="tabs" role="tablist" aria-label="分析模式"><button id="sweepTab" class="tab active" role="tab" aria-selected="true">自动扫频</button><button id="rtaTab" class="tab" role="tab" aria-selected="false">实时频谱 RTA</button></div>
       <div id="sweepControls">
-        <div class="options">
+        <div class="options" id="singleSweepSettings">
           <div class="field"><label for="rangeSelect">测试频率</label><select id="rangeSelect"><option value="40">40 Hz – 16 kHz</option><option value="80">80 Hz – 16 kHz</option><option value="125">125 Hz – 16 kHz</option></select></div>
           <div class="field"><label for="sweepSpeed">每频点采样</label><select id="sweepSpeed"><option value="normal">标准 · 约 20 秒</option><option value="careful">精细 · 约 33 秒</option></select></div>
         </div>
@@ -38,7 +57,7 @@
       </div>
       <div id="rtaControls" class="hide"><p class="hint">实时显示麦克风接收到的 1/3 倍频程能量。用外部播放器播放粉红噪声，更适合排查驻波和频段异常。纵轴为未校准 dBFS。</p><div class="row"><button id="freezeRta" class="btn">冻结画面</button><span id="rtaState" class="liveNote">开启麦克风即可观察</span></div><div class="meta"><div class="stat"><div class="key">峰值频段</div><div class="val" id="rtaPeakFreq">—</div></div><div class="stat"><div class="key">峰值能量</div><div class="val" id="rtaPeakValue">—</div></div><div class="stat"><div class="key">采样模式</div><div class="val" style="font-size:15px">1/3 OCT</div></div></div></div>
     </div>
-    <div class="card">
+    <div class="card" id="chartCard">
       <div class="cardTitle"><h2>03 / 频谱与频响曲线</h2><span class="micro" id="chartMode">Δ dB / 1 kHz</span></div>
       <div class="plotwrap"><canvas id="plot" aria-label="频响测试曲线" role="img"></canvas></div>
       <div class="legend" id="chartLegend"><span><i class="linekey"></i>本次测量</span><span><i class="linekey ref"></i>参考曲线</span><span><i class="linekey delta"></i>差值（本次－参考）</span></div>
@@ -46,19 +65,19 @@
       <div id="insights" class="insight"></div>
       <div class="row" style="margin-top:17px"><button id="csvBtn" class="btn small" disabled>导出 CSV</button><button id="pngBtn" class="btn small">导出 PNG</button><button id="clearRef" class="btn small ghost">清除参考</button></div>
     </div>
-    <div class="card">
+    <div class="card" id="signalCard">
       <div class="cardTitle"><h2>04 / 信号发生器</h2><span class="micro">单频 / 粉红噪声</span></div>
       <div class="options"><div class="field"><label for="signalType">信号类型</label><select id="signalType"><option value="sine">正弦波</option><option value="pink">粉红噪声</option></select></div><div class="field"><label for="toneFreq">正弦波频率</label><select id="toneFreq"><option value="63">63 Hz</option><option value="100">100 Hz</option><option value="250">250 Hz</option><option value="1000" selected>1 kHz</option><option value="4000">4 kHz</option><option value="10000">10 kHz</option></select></div></div>
       <div class="field"><div class="row spaced"><label for="volume">测试音量（软件输出增益）</label><span class="tiny" id="volumeLabel">18%</span></div><input id="volume" type="range" min="3" max="35" step="1" value="18"><div class="assist">开始时使用较低的系统音量，逐步提高；避免高音量刺激耳朵或损伤扬声器。</div></div>
       <div class="row" style="margin-top:14px"><button id="playSignal" class="btn">播放测试信号</button><button id="stopSignal" class="btn warn" disabled>停止播放</button></div>
-      <p class="hint" style="margin:12px 0 0">在另一台设备打开本工具也可以单独播放测试信号；iPhone 切换到“实时频谱 RTA”即可监听外部音箱。</p>
+      <p class="hint" style="margin:12px 0 0">双机操作请优先使用页面顶部的「播放端」与「收音端」模式；只有播放端支持正常的蓝牙输出路由。</p>
     </div>
     <div class="card">
       <div class="cardTitle"><h2>测试建议与边界</h2><span class="micro">阅读后测量</span></div>
-      <div class="hint"><strong>推荐：</strong>把 iPhone 固定在听音位置，避开手部遮挡，使用外部音箱播放粉红噪声，在 RTA 模式观察频段分布。每次测量保持音量、机位、朝向一致。<br><strong>同机扫频：</strong>可作概略比较，但 iOS 可能切换到听筒输出，且扬声器与麦克风相互耦合，低频和高频曲线误差尤其明显。<br><strong>限制：</strong>网页无法获取 iPhone 麦克风的出厂校准、关闭全部硬件 DSP 或提供可靠的绝对 dB SPL；它不能替代 REW、校准测量麦克风或声学分析仪。<br><strong>隐私：</strong>不调用服务器上传音频；参考曲线只保存在本设备浏览器的 localStorage 中。</div>
+      <div class="hint"><strong>推荐：</strong>选择「收音端」固定 iPhone 在听音位置，避开手部遮挡，使用外部音箱播放粉红噪声，在 RTA 模式观察频段分布。每次测量保持音量、机位、朝向一致。<br><strong>蓝牙：</strong>网页无法强制选择蓝牙输出；请在播放端通过控制中心选择，iPhone 收音端尽量使用机身麦克风。<br><strong>同机扫频：</strong>可作概略比较，但 iOS 可能切换到听筒输出，且扬声器与麦克风相互耦合，低频和高频曲线误差尤其明显。<br><strong>限制：</strong>网页无法获取 iPhone 麦克风的出厂校准、关闭全部硬件 DSP 或提供可靠的绝对 dB SPL；它不能替代 REW、校准测量麦克风或声学分析仪。<br><strong>隐私：</strong>不调用服务器上传音频；参考曲线只保存在本设备浏览器的 localStorage 中。</div>
     </div>
   </section>
-  <footer>ACOUSTIC LAB · v1.0 · Static / Offline-processing architecture · 使用时请保持 Safari 页面处于前台</footer>
+  <footer>ACOUSTIC LAB · v1.1 · Static / Offline-processing architecture · 使用时请保持 Safari 页面处于前台</footer>
 </main>
 <script>
 'use strict';
@@ -66,11 +85,14 @@
 const $=id=>document.getElementById(id);
 const FREQS=[31.5,40,50,63,80,100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000,10000,12500,16000];
 const STORAGE='acoustic-lab-reference-v1';
+const PAIR_FS=FREQS.filter(f=>f>=40&&f<=16000),PAIR_CUE_HZ=1800,PAIR_CUE_S=1.25,PAIR_GAP_S=.60,PAIR_STEP_S=1.30;
+const PAIR_TOTAL_S=PAIR_CUE_S+PAIR_GAP_S+PAIR_FS.length*PAIR_STEP_S;
 const C={cyan:'#65dbe8',purple:'#c4b0ff',green:'#9af3be',grid:'#304155',muted:'#879ab3',text:'#eff5fc'};
 let ctx=null,stream=null,source=null,analyser=null,dbBins=null,timeBins=null;
 let osc=null,gain=null,noiseSrc=null,signalMode=null;
 let measuring=false,cancelSweep=false,mode='sweep',rtaFrozen=false;
 let measured=null,reference=null,rtaData=[],inputDb=-100,rafId=0,lastRta=0;
+let role='single',pairSources=[],pairPlayRun=null,pairListenRun=null;
 const sleep=ms=>new Promise(res=>setTimeout(res,ms));
 const fmtF=f=>f>=1000?Number((f/1000).toFixed(2)).toString()+'k':Number(f.toFixed(1)).toString();
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -78,15 +100,17 @@ function status(label,state='off'){ $('statusText').textContent=label;$('statusD
 function alertText(msg){$('alert').textContent=msg;$('alert').classList.remove('hide');}
 function clearAlert(){$('alert').classList.add('hide');}
 function mediaError(err){const n=err&&err.name;return n==='NotAllowedError'?'麦克风权限被拒绝。请在 Safari 的网站设置中允许麦克风访问。':n==='NotFoundError'?'没有检测到可用麦克风。':n==='NotReadableError'?'麦克风被其他应用占用，或系统无法开启。':(err?.message||'音频启动失败');}
+function audioSessionType(value){try{if(navigator.audioSession)navigator.audioSession.type=value;}catch{}}
 async function ensureContext(){if(!window.AudioContext&&!window.webkitAudioContext)throw Error('此浏览器不支持 Web Audio API。');if(!ctx||ctx.state==='closed'){const AC=window.AudioContext||window.webkitAudioContext;ctx=new AC();}await ctx.resume();return ctx;}
 async function enableMic(){
+  if(role==='player'){alertText('播放端不需要麦克风，请在另一部 iPhone 上选择「收音端」。');return false;}
   if(stream)return true;
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){alertText('需要 HTTPS 地址与支持 getUserMedia 的浏览器。请使用 Safari 打开 GitHub Pages 的 HTTPS 页面。');return false;}
   try{
     clearAlert();status('正在申请麦克风权限…','busy');await ensureContext();
     try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:{ideal:false},noiseSuppression:{ideal:false},autoGainControl:{ideal:false},channelCount:{ideal:1}},video:false});}
     catch(e){if(e.name==='OverconstrainedError')stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});else throw e;}
-    await ctx.resume();source=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=16384;analyser.smoothingTimeConstant=.12;analyser.minDecibels=-110;analyser.maxDecibels=0;source.connect(analyser);
+    audioSessionType('play-and-record');await ctx.resume();source=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=16384;analyser.smoothingTimeConstant=.12;analyser.minDecibels=-110;analyser.maxDecibels=0;source.connect(analyser);
     dbBins=new Float32Array(analyser.frequencyBinCount);timeBins=new Float32Array(analyser.fftSize);
     $('micBtn').textContent='关闭麦克风';$('sampleRate').textContent=(ctx.sampleRate/1000).toFixed(1)+' kHz';
     const track=stream.getAudioTracks()[0],settings=track.getSettings();$('deviceLabel').textContent=track.label||'默认麦克风';
@@ -97,21 +121,21 @@ async function enableMic(){
     return true;
   }catch(e){stream?.getTracks().forEach(t=>t.stop());stream=null;status('麦克风启动失败','error');alertText(mediaError(e));return false;}
 }
-async function closeMic(){stopMeasurement();stopOutput();if(source)try{source.disconnect();}catch{};source=null;analyser=null;dbBins=null;timeBins=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('micBtn').textContent='启用麦克风';$('deviceLabel').textContent='麦克风未启用';$('sampleRate').textContent='等待授权';$('inputLevel').textContent='—';$('meterFill').style.width='0%';status('尚未启用麦克风');}
+async function closeMic(){cancelPairListen('麦克风关闭，双机收音已停止');stopMeasurement();stopOutput();if(source)try{source.disconnect();}catch{};source=null;analyser=null;dbBins=null;timeBins=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('micBtn').textContent='启用麦克风';$('deviceLabel').textContent='麦克风未启用';$('sampleRate').textContent='等待授权';$('inputLevel').textContent='—';$('meterFill').style.width='0%';status('尚未启用麦克风');audioSessionType('auto');}
 function dbFromBins(freq,widthHz=0){if(!analyser||!dbBins)return -110;const binHz=ctx.sampleRate/analyser.fftSize;const mid=Math.round(freq/binHz);const span=Math.max(2,Math.ceil(widthHz/binHz));let power=0;for(let i=Math.max(1,mid-span);i<=Math.min(dbBins.length-1,mid+span);i++){const d=dbBins[i];if(Number.isFinite(d))power+=Math.pow(10,d/10);}return power>0?10*Math.log10(power):-110;}
 function bandDb(freq){if(!analyser||!dbBins)return -110;const lo=freq/Math.pow(2,1/6),hi=freq*Math.pow(2,1/6),hz=ctx.sampleRate/analyser.fftSize;let p=0;for(let i=Math.max(1,Math.ceil(lo/hz));i<Math.min(dbBins.length,Math.ceil(hi/hz));i++)p+=Math.pow(10,dbBins[i]/10);return p>0?10*Math.log10(p):-110;}
-function levelTick(ts){rafId=requestAnimationFrame(levelTick);if(!analyser)return;analyser.getFloatTimeDomainData(timeBins);let sum=0;for(let i=0;i<timeBins.length;i+=16){const v=timeBins[i];sum+=v*v;}const rms=Math.sqrt(sum/(timeBins.length/16));inputDb=20*Math.log10(Math.max(1e-8,rms));$('inputLevel').textContent=inputDb.toFixed(1)+' dBFS';$('meterFill').style.width=clamp((inputDb+80)/80*100,0,100)+'%';if(mode==='rta'&&!rtaFrozen&&ts-lastRta>120){lastRta=ts;analyser.getFloatFrequencyData(dbBins);rtaData=FREQS.filter(f=>f>=40&&f<Math.min(16001,ctx.sampleRate*.45)).map(f=>({f,db:bandDb(f)}));let max=rtaData.reduce((a,b)=>b.db>a.db?b:a,{f:0,db:-110});$('rtaPeakFreq').textContent=fmtF(max.f)+' Hz';$('rtaPeakValue').textContent=max.db.toFixed(1)+' dBFS';draw();}}
+function levelTick(ts){rafId=requestAnimationFrame(levelTick);tickPairPlayback();tickPairListen(ts);if(!analyser)return;analyser.getFloatTimeDomainData(timeBins);let sum=0;for(let i=0;i<timeBins.length;i+=16){const v=timeBins[i];sum+=v*v;}const rms=Math.sqrt(sum/(timeBins.length/16));inputDb=20*Math.log10(Math.max(1e-8,rms));$('inputLevel').textContent=inputDb.toFixed(1)+' dBFS';$('meterFill').style.width=clamp((inputDb+80)/80*100,0,100)+'%';if(mode==='rta'&&!rtaFrozen&&ts-lastRta>120){lastRta=ts;analyser.getFloatFrequencyData(dbBins);rtaData=FREQS.filter(f=>f>=40&&f<Math.min(16001,ctx.sampleRate*.45)).map(f=>({f,db:bandDb(f)}));let max=rtaData.reduce((a,b)=>b.db>a.db?b:a,{f:0,db:-110});$('rtaPeakFreq').textContent=fmtF(max.f)+' Hz';$('rtaPeakValue').textContent=max.db.toFixed(1)+' dBFS';draw();}}
 async function prepareOutput(){await ensureContext();if(signalMode)stopOutput();gain=ctx.createGain();gain.gain.value=0;gain.connect(ctx.destination);}
 function outputVolume(){return Number($('volume').value)/100;}
-function stopOutput(){if(gain&&ctx&&ctx.state!=='closed'){try{gain.gain.cancelScheduledValues(ctx.currentTime);gain.gain.setTargetAtTime(0,ctx.currentTime,.015);}catch{}}if(osc){try{osc.stop(ctx.currentTime+.09)}catch{}osc=null;}if(noiseSrc){try{noiseSrc.stop(ctx.currentTime+.09)}catch{}noiseSrc=null;}signalMode=null;$('playSignal').disabled=false;$('stopSignal').disabled=true;}
+function stopOutput(){if(pairSources.length){for(const item of pairSources){try{item.stop()}catch{}}pairSources=[];}if(pairPlayRun){pairPlayRun=null;$('pairPlay').disabled=false;$('pairStop').disabled=true;}if(gain&&ctx&&ctx.state!=='closed'){try{gain.gain.cancelScheduledValues(ctx.currentTime);gain.gain.setTargetAtTime(0,ctx.currentTime,.015);}catch{}}if(osc){try{osc.stop(ctx.currentTime+.09)}catch{}osc=null;}if(noiseSrc){try{noiseSrc.stop(ctx.currentTime+.09)}catch{}noiseSrc=null;}signalMode=null;$('playSignal').disabled=false;$('stopSignal').disabled=true;}
 function createPinkBuffer(){const b=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate);const a=b.getChannelData(0);let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;for(let i=0;i<a.length;i++){const white=Math.random()*2-1;b0=.99886*b0+white*.0555179;b1=.99332*b1+white*.0750759;b2=.969*b2+white*.153852;b3=.8665*b3+white*.3104856;b4=.55*b4+white*.5329522;b5=-.7616*b5-white*.016898;a[i]=(b0+b1+b2+b3+b4+b5+b6+white*.5362)*.10;b6=white*.115926;}return b;}
-async function startSignal(){if(measuring)return;try{await prepareOutput();if($('signalType').value==='pink'){noiseSrc=ctx.createBufferSource();noiseSrc.buffer=createPinkBuffer();noiseSrc.loop=true;noiseSrc.connect(gain);noiseSrc.start();signalMode='pink';}else{osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=Number($('toneFreq').value);osc.connect(gain);osc.start();signalMode='sine';}gain.gain.setTargetAtTime(outputVolume(),ctx.currentTime,.06);$('playSignal').disabled=true;$('stopSignal').disabled=false;}catch(e){stopOutput();alertText('播放失败：'+mediaError(e));}}
+async function startSignal(){if(measuring||pairListenRun)return;if(role==='player')audioSessionType('playback');try{await prepareOutput();if($('signalType').value==='pink'){noiseSrc=ctx.createBufferSource();noiseSrc.buffer=createPinkBuffer();noiseSrc.loop=true;noiseSrc.connect(gain);noiseSrc.start();signalMode='pink';}else{osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=Number($('toneFreq').value);osc.connect(gain);osc.start();signalMode='sine';}gain.gain.setTargetAtTime(outputVolume(),ctx.currentTime,.06);$('playSignal').disabled=true;$('stopSignal').disabled=false;}catch(e){stopOutput();alertText('播放失败：'+mediaError(e));}}
 function normalized(points){if(!points||!points.length)return [];const base=points.find(p=>p.f===1000);if(!base||!Number.isFinite(base.db))return [];return points.map(p=>({f:p.f,db:p.db-base.db,raw:p.db}));}
 function saveReference(){if(!measured||!measured.length){alertText('请先完成至少一次完整扫频，再保存参考曲线。');return;}try{reference=JSON.parse(JSON.stringify(measured));localStorage.setItem(STORAGE,JSON.stringify({v:1,points:reference,savedAt:new Date().toISOString()}));clearAlert();draw();}catch(e){alertText('无法写入浏览器本地存储：'+e.message);}}
 function loadReference(){try{const old=JSON.parse(localStorage.getItem(STORAGE)||'null');if(old?.v===1&&Array.isArray(old.points)&&old.points.every(p=>Number.isFinite(p.f)&&Number.isFinite(p.db))&&old.points.some(p=>p.f===1000))reference=old.points;}catch{}}
 function stopMeasurement(){cancelSweep=true;if(measuring){$('progressText').textContent='正在停止…';}stopOutput();}
-function stateSweep(on){measuring=on;$('startSweep').disabled=on;$('stopSweep').disabled=!on;$('micBtn').disabled=on;$('playSignal').disabled=on||Boolean(signalMode);$('rangeSelect').disabled=on;$('sweepSpeed').disabled=on;$('saveRef').disabled=on;}
-async function startSweep(){if(measuring)return;cancelSweep=false;const ok=await enableMic();if(!ok)return;clearAlert();stopOutput();stateSweep(true);
+function stateSweep(on){measuring=on;['roleSingle','rolePlayer','roleReceiver'].forEach(id=>$(id).disabled=on);$('startSweep').disabled=on;$('stopSweep').disabled=!on;$('micBtn').disabled=on;$('playSignal').disabled=on||Boolean(signalMode);$('rangeSelect').disabled=on;$('sweepSpeed').disabled=on;$('saveRef').disabled=on;}
+async function startSweep(){if(role!=='single')return;if(measuring)return;cancelSweep=false;const ok=await enableMic();if(!ok)return;clearAlert();stopOutput();stateSweep(true);
 const min=Number($('rangeSelect').value);const fs=FREQS.filter(f=>f>=min&&f<=Math.min(16000,ctx.sampleRate*.45));const careful=$('sweepSpeed').value==='careful';
 const settleMs=careful?570:340,samples=careful?9:6,interval=careful?73:55;
 $('pointCount').textContent='0 / '+fs.length;$('ref1k').textContent='—';$('progressText').textContent='开始测量';$('progressFill').style.width='0%';$('progressPercent').textContent='0%';measured=null;draw();
@@ -156,9 +180,113 @@ function updateInsights(){const el=$('insights');if(mode==='rta'){el.innerHTML='
 function download(name,blob){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function exportCSV(){if(!measured)return;const nm=normalized(measured),rf=new Map(normalized(reference).map(p=>[p.f,p.db]));const s=['frequency_hz,raw_dbfs,relative_db_at_1khz,reference_relative_db,delta_db'];for(let i=0;i<measured.length;i++){const p=measured[i],r=rf.get(p.f);s.push([p.f,p.db.toFixed(3),nm[i].db.toFixed(3),r===undefined?'':r.toFixed(3),r===undefined?'':(nm[i].db-r).toFixed(3)].join(','));}download('acoustic-lab-'+new Date().toISOString().slice(0,10)+'.csv',new Blob(['\ufeff'+s.join('\r\n')],{type:'text/csv;charset=utf-8'}));}
 function exportPNG(){draw();$('plot').toBlob(b=>{if(b)download('acoustic-lab-'+mode+'-'+new Date().toISOString().slice(0,10)+'.png',b);else alertText('无法生成图片。');},'image/png');}
+
+function setRole(next){
+ if(!['single','player','receiver'].includes(next))next='single';
+ if(next===role)return;
+ if(measuring)stopMeasurement();cancelPairListen('已取消收音');stopOutput();
+ if(next==='player'&&stream)closeMic();
+ role=next;
+ for(const [name,id] of [['single','roleSingle'],['player','rolePlayer'],['receiver','roleReceiver']]){$(id).classList.toggle('active',name===next);$(id).setAttribute('aria-pressed',String(name===next));}
+ $('dualCard').classList.toggle('hide',next==='single');$('dualPlayerControls').classList.toggle('hide',next!=='player');$('dualReceiverControls').classList.toggle('hide',next!=='receiver');
+ $('micCard').classList.toggle('hide',next==='player');$('analysisCard').classList.toggle('hide',next==='player');$('chartCard').classList.toggle('hide',next==='player');$('signalCard').classList.toggle('hide',next==='receiver');
+ $('singleSweepSettings').classList.toggle('hide',next==='receiver');$('startSweep').classList.toggle('hide',next==='receiver');$('stopSweep').classList.toggle('hide',next==='receiver');
+ $('roleDescription').textContent=next==='single'?'同机测试需要同时播放和收音；iOS 可能将声音切换至听筒。建议使用双机模式。':next==='player'?'此设备只播放，不启用麦克风。通过控制中心选择蓝牙/AirPlay 输出；另一台 iPhone 选择「收音端」。':'此 iPhone 只收音，不播放测试音。先准备收音，再启动另一台设备的扫频播放。';
+ if(next==='player')audioSessionType('playback');else if(!stream)audioSessionType('auto');
+ try{const u=new URL(location.href);if(next==='single')u.searchParams.delete('role');else u.searchParams.set('role',next);history.replaceState(null,'',u);}catch{}
+ if(next==='receiver')setMode('sweep');draw();
+}
+function schedulePairTone(f,start,duration){
+ const o=ctx.createOscillator(),envelope=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f,start);
+ envelope.gain.setValueAtTime(0,start);envelope.gain.linearRampToValueAtTime(1,start+.025);
+ envelope.gain.setValueAtTime(1,start+Math.max(.025,duration-.06));envelope.gain.linearRampToValueAtTime(0,start+duration-.025);
+ o.connect(envelope);envelope.connect(gain);o.start(start);o.stop(start+duration);pairSources.push(o);
+}
+async function startPairPlayback(){
+ if(role!=='player'||pairPlayRun)return;
+ try{
+  clearAlert();if(stream)await closeMic();stopOutput();audioSessionType('playback');await prepareOutput();gain.gain.setValueAtTime(outputVolume(),ctx.currentTime);
+  const t0=ctx.currentTime+.25;
+  schedulePairTone(PAIR_CUE_HZ,t0,PAIR_CUE_S);
+  const first=t0+PAIR_CUE_S+PAIR_GAP_S;
+  for(let i=0;i<PAIR_FS.length;i++)schedulePairTone(PAIR_FS[i],first+i*PAIR_STEP_S,PAIR_STEP_S-.06);
+  signalMode='pair';pairPlayRun={start:t0};$('pairPlay').disabled=true;$('pairStop').disabled=false;
+  $('playSignal').disabled=true;$('pairPlayFreq').textContent='同步提示音即将播放';$('pairPlayState').textContent='请保持屏幕常亮、Safari 在前台';
+ }catch(e){stopOutput();alertText('双机播放失败：'+mediaError(e));}
+}
+function stopPairPlayback(message='播放已停止'){
+ stopOutput();$('pairPlayState').textContent=message;$('pairPlayFreq').textContent=message;
+}
+function tickPairPlayback(){
+ if(!pairPlayRun||!ctx)return;
+ const t=ctx.currentTime-pairPlayRun.start;
+ if(t>=PAIR_TOTAL_S){$('pairPlayBar').style.width='100%';stopPairPlayback('扫频播放完成');return;}
+ $('pairPlayBar').style.width=clamp(t/PAIR_TOTAL_S*100,0,100)+'%';
+ if(t<0){$('pairPlayFreq').textContent='准备播放';return;}
+ if(t<PAIR_CUE_S){$('pairPlayFreq').textContent='同步提示音 · 1.8 kHz';return;}
+ if(t<PAIR_CUE_S+PAIR_GAP_S){$('pairPlayFreq').textContent='同步间隔';return;}
+ const n=Math.min(PAIR_FS.length-1,Math.floor((t-PAIR_CUE_S-PAIR_GAP_S)/PAIR_STEP_S));
+ $('pairPlayFreq').textContent=fmtF(PAIR_FS[n])+' Hz';$('pairPlayState').textContent='播放频点 '+(n+1)+' / '+PAIR_FS.length+' · 音量保持不变';
+}
+async function startPairListen(){
+ if(role!=='receiver'||pairListenRun)return;
+ if(measuring)return;
+ clearAlert();stopOutput();
+ const ok=await enableMic();if(!ok)return;
+ pairListenRun={state:'arming',candidateAt:0,anchorAt:0,samples:PAIR_FS.map(()=>[]),lastFinalized:-1,lastSampleAt:0,startedAt:performance.now(),points:[]};
+ measured=null;setMode('sweep');$('csvBtn').disabled=true;$('pairListen').disabled=true;$('pairCancel').disabled=false;
+ $('pairRecordBar').style.width='0%';$('pairRecordState').textContent='等待 1.8 kHz 同步信标…';$('pairRecordDetail').textContent='在播放端点击「播放双机扫频」，收音端将自动触发';
+ $('pointCount').textContent='0 / '+PAIR_FS.length;$('progressFill').style.width='0%';$('progressText').textContent='等待同步音';$('progressPercent').textContent='0%';$('ref1k').textContent='—';draw();
+}
+function cancelPairListen(message='已取消收音'){
+ if(!pairListenRun)return;
+ pairListenRun=null;$('pairListen').disabled=false;$('pairCancel').disabled=true;
+ $('pairRecordState').textContent=message;$('pairRecordDetail').textContent='如需重新测量，请重新准备收音';
+}
+function finishPairStep(r,i){
+ const xs=r.samples[i];if(xs&&xs.length>=3){xs.sort((a,b)=>a-b);const db=xs[Math.floor(xs.length/2)];r.points.push({f:PAIR_FS[i],db});if(PAIR_FS[i]===1000)$('ref1k').textContent=db.toFixed(1)+' dBFS';}
+ const count=r.points.length,pct=Math.round((i+1)/PAIR_FS.length*100);
+ $('pointCount').textContent=count+' / '+PAIR_FS.length;$('progressPercent').textContent=pct+'%';$('progressFill').style.width=pct+'%';
+ measured=r.points.slice();$('csvBtn').disabled=!measured.length;draw();
+}
+function finishPairListen(r){
+ if(pairListenRun!==r)return;
+ for(let i=r.lastFinalized+1;i<PAIR_FS.length;i++)finishPairStep(r,i);
+ const count=r.points.length,hasBase=r.points.some(p=>p.f===1000);
+ cancelPairListen(count+' / '+PAIR_FS.length+' 个频点完成');
+ $('pairRecordBar').style.width='100%';$('pairRecordDetail').textContent='收音完成 · 可保存参考曲线或导出 CSV / PNG';
+ $('progressText').textContent='双机扫频完成';
+ if(count<PAIR_FS.length-2||!hasBase)alertText('双机测量仅捕获 '+count+' / '+PAIR_FS.length+' 个频点。结果可能不完整，请确认两台设备都在前台、没有其他音频干扰并重试。');
+ else if(inputDb>-5)alertText('输入电平接近削波，请适当降低外部音箱音量重测。');
+ draw();
+}
+function tickPairListen(now){
+ const r=pairListenRun;if(!r||!analyser)return;
+ if(now-r.lastSampleAt<65)return;r.lastSampleAt=now;
+ analyser.getFloatFrequencyData(dbBins);
+ if(r.state==='arming'){
+  if(now-r.startedAt>90000){cancelPairListen('等待同步超时');alertText('90 秒内未检测到同步信标，请确认播放端音量、麦克风权限及设备距离。');return;}
+  const marker=dbFromBins(PAIR_CUE_HZ,26),side=Math.max(dbFromBins(1450,45),dbFromBins(2230,50));
+  const found=marker>-76&&marker>side+9;
+  if(found){if(!r.candidateAt)r.candidateAt=now;if(now-r.candidateAt>=230){r.state='capturing';r.anchorAt=r.candidateAt;$('pairRecordState').textContent='已识别同步信标';$('pairRecordDetail').textContent='自动开始采集，请保持设备位置不变';$('progressText').textContent='双机采集中';}}
+  else r.candidateAt=0;
+  return;
+ }
+ const t=(now-r.anchorAt)/1000-(PAIR_CUE_S+PAIR_GAP_S);
+ if(t<0)return;
+ if(t>=PAIR_FS.length*PAIR_STEP_S+.18){finishPairListen(r);return;}
+ const i=Math.floor(t/PAIR_STEP_S);if(i>=PAIR_FS.length)return;
+ while(r.lastFinalized<i-1){r.lastFinalized++;finishPairStep(r,r.lastFinalized);}
+ const phase=t-i*PAIR_STEP_S;
+ if(phase>.50&&phase<1.05){r.samples[i].push(dbFromBins(PAIR_FS[i],Math.max(6,Math.min(140,PAIR_FS[i]*.012))));}
+ $('curFreq').textContent=fmtF(PAIR_FS[i])+' Hz';$('pairRecordState').textContent=fmtF(PAIR_FS[i])+' Hz';
+ $('pairRecordBar').style.width=clamp((i+phase/PAIR_STEP_S)/PAIR_FS.length*100,0,100)+'%';
+ $('pairRecordDetail').textContent='正在收音 '+(i+1)+' / '+PAIR_FS.length+' · 保持安静';
+}
 $('micBtn').addEventListener('click',()=>stream?closeMic():enableMic());$('startSweep').addEventListener('click',startSweep);$('stopSweep').addEventListener('click',stopMeasurement);$('saveRef').addEventListener('click',saveReference);$('clearRef').addEventListener('click',()=>{reference=null;try{localStorage.removeItem(STORAGE);}catch{}draw();});$('sweepTab').addEventListener('click',()=>setMode('sweep'));$('rtaTab').addEventListener('click',()=>setMode('rta'));$('freezeRta').addEventListener('click',()=>{rtaFrozen=!rtaFrozen;$('freezeRta').textContent=rtaFrozen?'继续实时显示':'冻结画面';$('rtaState').textContent=rtaFrozen?'画面已冻结':'实时更新中';});
+$('roleSingle').addEventListener('click',()=>setRole('single'));$('rolePlayer').addEventListener('click',()=>setRole('player'));$('roleReceiver').addEventListener('click',()=>setRole('receiver'));$('pairPlay').addEventListener('click',startPairPlayback);$('pairStop').addEventListener('click',()=>stopPairPlayback());$('pairListen').addEventListener('click',startPairListen);$('pairCancel').addEventListener('click',()=>cancelPairListen());
 $('signalType').addEventListener('change',()=>{$('toneFreq').disabled=$('signalType').value!=='sine';if(signalMode)stopOutput();});$('toneFreq').addEventListener('change',()=>{if(signalMode==='sine'&&osc)osc.frequency.setTargetAtTime(Number($('toneFreq').value),ctx.currentTime,.02);});$('volume').addEventListener('input',()=>{$('volumeLabel').textContent=$('volume').value+'%';if(gain&&signalMode)gain.gain.setTargetAtTime(outputVolume(),ctx.currentTime,.035);});$('playSignal').addEventListener('click',startSignal);$('stopSignal').addEventListener('click',stopOutput);$('csvBtn').addEventListener('click',exportCSV);$('pngBtn').addEventListener('click',exportPNG);
-window.addEventListener('resize',draw);document.addEventListener('visibilitychange',()=>{if(document.hidden){if(measuring)stopMeasurement();if(signalMode)stopOutput();}});loadReference();draw();requestAnimationFrame(levelTick);
+window.addEventListener('resize',draw);document.addEventListener('visibilitychange',()=>{if(document.hidden){if(measuring)stopMeasurement();if(signalMode)stopOutput();if(pairListenRun)cancelPairListen('页面切到后台，收音已取消');}});loadReference();const urlRole=new URL(location.href).searchParams.get('role');if(['player','receiver'].includes(urlRole))setRole(urlRole);draw();requestAnimationFrame(levelTick);
 })();
 </script>
 </body>

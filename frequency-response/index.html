@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b111c">
+  <meta name="description" content="iPhone 麦克风相对频响扫频、实时频谱分析与测试信号发生器。音频仅在本地处理。">
+  <title>Acoustic Lab · iPhone 频响测试</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b111c;--surface:#111b29;--surface2:#162235;--edge:#27364b;--text:#eff5fc;--muted:#90a2bc;--cyan:#65dbe8;--green:#9af3be;--orange:#fbbf7a;--red:#fc9d9c;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",sans-serif}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:radial-gradient(ellipse at top right,#17304a 0,transparent 43%),var(--bg);color:var(--text);line-height:1.55;min-height:100dvh;-webkit-tap-highlight-color:transparent}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.36;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+    .app{max-width:950px;margin:auto;padding:30px 22px calc(42px + env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:start;gap:12px;margin:0 0 26px}.eyebrow{color:var(--cyan);font-weight:750;letter-spacing:.19em;font-size:11px}h1{font-size:clamp(28px,5vw,38px);letter-spacing:-.06em;line-height:1.14;margin:9px 0 8px;font-weight:730}header p{color:var(--muted);margin:0;font-size:13px;max-width:510px}.pill{background:#163b40;color:#9af3c9;border:1px solid #2b665f;border-radius:50px;white-space:nowrap;padding:6px 10px;font-size:11px;font-weight:650}.stack{display:grid;gap:16px}.card{border:1px solid var(--edge);border-radius:20px;background:linear-gradient(150deg,rgba(24,38,56,.94),rgba(13,22,36,.96));padding:21px;box-shadow:0 12px 38px #0001}.cardTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.cardTitle h2{font-size:15px;margin:0;letter-spacing:-.01em}.micro{font-size:11px;color:var(--muted)}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.spaced{justify-content:space-between}.btn{border:1px solid var(--edge);background:var(--surface2);border-radius:11px;color:var(--text);padding:12px 15px;min-height:44px;font-size:13px;font-weight:700}.btn.primary{color:#06181f;background:var(--cyan);border-color:var(--cyan)}.btn.warn{border-color:#66413b;background:#392728;color:#ffd0c0}.btn.small{padding:8px 12px;min-height:36px;font-weight:650;font-size:12px}.btn.ghost{background:transparent}.tabs{display:flex;gap:5px;padding:5px;background:#0b1522;border:1px solid var(--edge);border-radius:12px;margin:16px 0 0}.tab{border:0;border-radius:8px;background:transparent;color:var(--muted);padding:11px 15px;font-size:13px;flex:1;font-weight:690}.tab.active{background:#23394c;color:var(--text)}.statusRow{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#68778c;box-shadow:0 0 0 4px #68778c18;flex:none}.dot.on{background:var(--green);box-shadow:0 0 0 4px #9af3be22}.dot.busy{background:var(--cyan);box-shadow:0 0 0 4px #65dbe822}.dot.error{background:var(--red)}.meter{height:7px;border-radius:20px;background:#0b1522;overflow:hidden;border:1px solid #25364a}.meter div{height:100%;background:linear-gradient(90deg,#287c8c,#6be2ef,#f2ba72);width:0%;transition:width .12s}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:13px 14px;background:#101c2b;border:1px solid #273648;border-radius:12px}.stat .key{font-size:11px;color:var(--muted)}.stat .val{font-size:19px;letter-spacing:-.025em;font-variant-numeric:tabular-nums;font-weight:680;margin-top:1px}.progress{height:6px;background:#0a1320;border-radius:9px;overflow:hidden;margin:12px 0}.progress div{height:100%;width:0;background:var(--cyan);transition:width .2s}.options{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}.field select,.field input[type=range]{width:100%}.field select{appearance:none;background:#0d1826;color:var(--text);border:1px solid #324459;border-radius:10px;padding:10px 13px;min-height:43px}.field input[type=range]{accent-color:var(--cyan);margin:12px 0 2px}.field .assist{font-size:11px;color:var(--muted)}.plotwrap{position:relative;width:100%;height:clamp(280px,51vw,385px);margin:0}.plotwrap canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:8px 0 2px}.linekey{display:inline-block;width:17px;height:3px;vertical-align:middle;margin-right:6px;border-radius:6px;background:var(--cyan)}.linekey.ref{background:#c4b0ff}.linekey.delta{background:var(--green)}.chartNotice{font-size:12px;color:var(--muted);margin-top:10px}.insight{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chip{font-size:12px;background:#132333;border:1px solid #2b4254;color:#cad7e8;border-radius:10px;padding:8px 10px}.chip b{color:var(--text)}.chip.orange b{color:var(--orange)}.alert{padding:13px 15px;background:#291f22;color:#f9c5ae;border-left:3px solid #d9896b;border-radius:7px;font-size:12px;line-height:1.7;margin-top:12px}.hint{color:var(--muted);font-size:12px;line-height:1.85}.hint strong{color:var(--text)}.hide{display:none!important}footer{color:#71839e;font-size:11px;margin-top:22px}.liveNote{font-size:12px;color:var(--muted)}.tiny{font-size:11px;color:var(--muted)}a{color:var(--cyan)}
+    @media(max-width:590px){.app{padding:22px 14px calc(35px + env(safe-area-inset-bottom))}.card{padding:17px 14px;border-radius:17px}h1{font-size:30px}.pill{font-size:10px}.meta{gap:7px}.stat{padding:10px 9px}.stat .val{font-size:17px}.options{gap:12px}.btn{padding:11px 13px}.row.actions{display:grid;grid-template-columns:1fr 1fr}.row.actions .btn:last-child:nth-child(3){grid-column:span 2}.plotwrap{height:310px}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header><div><div class="eyebrow">ACOUSTIC LAB / WEB AUDIO</div><h1>频响测试器<span style="color:var(--cyan)">.</span></h1><p>把 iPhone 当作简易测试麦克风。扫频分析、实时 RTA 与信号发生器，所有音频仅在浏览器本地处理。</p></div><div class="pill">LOCAL · v1.0</div></header>
+  <section class="stack">
+    <div class="card">
+      <div class="cardTitle"><h2>01 / 麦克风与采集</h2><span class="micro" id="sampleRate">等待授权</span></div>
+      <div class="statusRow"><i class="dot" id="statusDot"></i><span id="statusText" role="status" aria-live="polite">尚未启用麦克风</span></div>
+      <div class="row"><button class="btn primary" id="micBtn">启用麦克风</button><span class="tiny" id="deviceLabel">需要 HTTPS 和麦克风权限</span></div>
+      <div style="margin-top:17px"><div class="row spaced" style="margin-bottom:7px"><span class="micro">输入电平（dBFS，非声压级）</span><span class="micro" id="inputLevel">—</span></div><div class="meter"><div id="meterFill"></div></div></div>
+      <div class="alert hide" id="alert" role="alert"></div>
+    </div>
+    <div class="card">
+      <div class="cardTitle"><h2>02 / 分析模式</h2><span class="micro">未校准 · 相对测量</span></div>
+      <div class="tabs" role="tablist" aria-label="分析模式"><button id="sweepTab" class="tab active" role="tab" aria-selected="true">自动扫频</button><button id="rtaTab" class="tab" role="tab" aria-selected="false">实时频谱 RTA</button></div>
+      <div id="sweepControls">
+        <div class="options">
+          <div class="field"><label for="rangeSelect">测试频率</label><select id="rangeSelect"><option value="40">40 Hz – 16 kHz</option><option value="80">80 Hz – 16 kHz</option><option value="125">125 Hz – 16 kHz</option></select></div>
+          <div class="field"><label for="sweepSpeed">每频点采样</label><select id="sweepSpeed"><option value="normal">标准 · 约 20 秒</option><option value="careful">精细 · 约 33 秒</option></select></div>
+        </div>
+        <div class="row actions"><button id="startSweep" class="btn primary">开始扫频</button><button id="stopSweep" class="btn warn" disabled>停止测量</button><button id="saveRef" class="btn">保存为参考曲线</button></div>
+        <div class="row spaced" style="margin-top:13px"><span class="tiny" id="progressText">准备就绪</span><span class="tiny" id="progressPercent">0%</span></div><div class="progress"><div id="progressFill"></div></div>
+        <div class="meta"><div class="stat"><div class="key">当前频率</div><div class="val" id="curFreq">—</div></div><div class="stat"><div class="key">已测频点</div><div class="val" id="pointCount">0 / 27</div></div><div class="stat"><div class="key">1 kHz 基准</div><div class="val" id="ref1k">—</div></div></div>
+      </div>
+      <div id="rtaControls" class="hide"><p class="hint">实时显示麦克风接收到的 1/3 倍频程能量。用外部播放器播放粉红噪声，更适合排查驻波和频段异常。纵轴为未校准 dBFS。</p><div class="row"><button id="freezeRta" class="btn">冻结画面</button><span id="rtaState" class="liveNote">开启麦克风即可观察</span></div><div class="meta"><div class="stat"><div class="key">峰值频段</div><div class="val" id="rtaPeakFreq">—</div></div><div class="stat"><div class="key">峰值能量</div><div class="val" id="rtaPeakValue">—</div></div><div class="stat"><div class="key">采样模式</div><div class="val" style="font-size:15px">1/3 OCT</div></div></div></div>
+    </div>
+    <div class="card">
+      <div class="cardTitle"><h2>03 / 频谱与频响曲线</h2><span class="micro" id="chartMode">Δ dB / 1 kHz</span></div>
+      <div class="plotwrap"><canvas id="plot" aria-label="频响测试曲线" role="img"></canvas></div>
+      <div class="legend" id="chartLegend"><span><i class="linekey"></i>本次测量</span><span><i class="linekey ref"></i>参考曲线</span><span><i class="linekey delta"></i>差值（本次－参考）</span></div>
+      <div class="chartNotice" id="chartNotice">扫频后会在这里显示以 1 kHz 归一化的频响曲线。图上的 0 dB 不等于 0 dB SPL。</div>
+      <div id="insights" class="insight"></div>
+      <div class="row" style="margin-top:17px"><button id="csvBtn" class="btn small" disabled>导出 CSV</button><button id="pngBtn" class="btn small">导出 PNG</button><button id="clearRef" class="btn small ghost">清除参考</button></div>
+    </div>
+    <div class="card">
+      <div class="cardTitle"><h2>04 / 信号发生器</h2><span class="micro">单频 / 粉红噪声</span></div>
+      <div class="options"><div class="field"><label for="signalType">信号类型</label><select id="signalType"><option value="sine">正弦波</option><option value="pink">粉红噪声</option></select></div><div class="field"><label for="toneFreq">正弦波频率</label><select id="toneFreq"><option value="63">63 Hz</option><option value="100">100 Hz</option><option value="250">250 Hz</option><option value="1000" selected>1 kHz</option><option value="4000">4 kHz</option><option value="10000">10 kHz</option></select></div></div>
+      <div class="field"><div class="row spaced"><label for="volume">测试音量（软件输出增益）</label><span class="tiny" id="volumeLabel">18%</span></div><input id="volume" type="range" min="3" max="35" step="1" value="18"><div class="assist">开始时使用较低的系统音量，逐步提高；避免高音量刺激耳朵或损伤扬声器。</div></div>
+      <div class="row" style="margin-top:14px"><button id="playSignal" class="btn">播放测试信号</button><button id="stopSignal" class="btn warn" disabled>停止播放</button></div>
+      <p class="hint" style="margin:12px 0 0">在另一台设备打开本工具也可以单独播放测试信号；iPhone 切换到“实时频谱 RTA”即可监听外部音箱。</p>
+    </div>
+    <div class="card">
+      <div class="cardTitle"><h2>测试建议与边界</h2><span class="micro">阅读后测量</span></div>
+      <div class="hint"><strong>推荐：</strong>把 iPhone 固定在听音位置，避开手部遮挡，使用外部音箱播放粉红噪声，在 RTA 模式观察频段分布。每次测量保持音量、机位、朝向一致。<br><strong>同机扫频：</strong>可作概略比较，但 iOS 可能切换到听筒输出，且扬声器与麦克风相互耦合，低频和高频曲线误差尤其明显。<br><strong>限制：</strong>网页无法获取 iPhone 麦克风的出厂校准、关闭全部硬件 DSP 或提供可靠的绝对 dB SPL；它不能替代 REW、校准测量麦克风或声学分析仪。<br><strong>隐私：</strong>不调用服务器上传音频；参考曲线只保存在本设备浏览器的 localStorage 中。</div>
+    </div>
+  </section>
+  <footer>ACOUSTIC LAB · v1.0 · Static / Offline-processing architecture · 使用时请保持 Safari 页面处于前台</footer>
+</main>
+<script>
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id);
+const FREQS=[31.5,40,50,63,80,100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000,10000,12500,16000];
+const STORAGE='acoustic-lab-reference-v1';
+const C={cyan:'#65dbe8',purple:'#c4b0ff',green:'#9af3be',grid:'#304155',muted:'#879ab3',text:'#eff5fc'};
+let ctx=null,stream=null,source=null,analyser=null,dbBins=null,timeBins=null;
+let osc=null,gain=null,noiseSrc=null,signalMode=null;
+let measuring=false,cancelSweep=false,mode='sweep',rtaFrozen=false;
+let measured=null,reference=null,rtaData=[],inputDb=-100,rafId=0,lastRta=0;
+const sleep=ms=>new Promise(res=>setTimeout(res,ms));
+const fmtF=f=>f>=1000?Number((f/1000).toFixed(2)).toString()+'k':Number(f.toFixed(1)).toString();
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function status(label,state='off'){ $('statusText').textContent=label;$('statusDot').className='dot '+state; }
+function alertText(msg){$('alert').textContent=msg;$('alert').classList.remove('hide');}
+function clearAlert(){$('alert').classList.add('hide');}
+function mediaError(err){const n=err&&err.name;return n==='NotAllowedError'?'麦克风权限被拒绝。请在 Safari 的网站设置中允许麦克风访问。':n==='NotFoundError'?'没有检测到可用麦克风。':n==='NotReadableError'?'麦克风被其他应用占用，或系统无法开启。':(err?.message||'音频启动失败');}
+async function ensureContext(){if(!window.AudioContext&&!window.webkitAudioContext)throw Error('此浏览器不支持 Web Audio API。');if(!ctx||ctx.state==='closed'){const AC=window.AudioContext||window.webkitAudioContext;ctx=new AC();}await ctx.resume();return ctx;}
+async function enableMic(){
+  if(stream)return true;
+  if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){alertText('需要 HTTPS 地址与支持 getUserMedia 的浏览器。请使用 Safari 打开 GitHub Pages 的 HTTPS 页面。');return false;}
+  try{
+    clearAlert();status('正在申请麦克风权限…','busy');await ensureContext();
+    try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:{ideal:false},noiseSuppression:{ideal:false},autoGainControl:{ideal:false},channelCount:{ideal:1}},video:false});}
+    catch(e){if(e.name==='OverconstrainedError')stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});else throw e;}
+    await ctx.resume();source=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=16384;analyser.smoothingTimeConstant=.12;analyser.minDecibels=-110;analyser.maxDecibels=0;source.connect(analyser);
+    dbBins=new Float32Array(analyser.frequencyBinCount);timeBins=new Float32Array(analyser.fftSize);
+    $('micBtn').textContent='关闭麦克风';$('sampleRate').textContent=(ctx.sampleRate/1000).toFixed(1)+' kHz';
+    const track=stream.getAudioTracks()[0],settings=track.getSettings();$('deviceLabel').textContent=track.label||'默认麦克风';
+    const dsp=['echoCancellation','noiseSuppression','autoGainControl'].filter(k=>settings[k]===true);
+    if(dsp.length)alertText('系统可能仍启用音频处理：'+dsp.join(' / ')+'。测试结果可能受影响。');
+    status('麦克风已启用 · 仅本地分析','on');
+    track.addEventListener('ended',()=>{if(stream){closeMic();alertText('麦克风已被系统停止，请重新启用。');}});
+    return true;
+  }catch(e){stream?.getTracks().forEach(t=>t.stop());stream=null;status('麦克风启动失败','error');alertText(mediaError(e));return false;}
+}
+async function closeMic(){stopMeasurement();stopOutput();if(source)try{source.disconnect();}catch{};source=null;analyser=null;dbBins=null;timeBins=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('micBtn').textContent='启用麦克风';$('deviceLabel').textContent='麦克风未启用';$('sampleRate').textContent='等待授权';$('inputLevel').textContent='—';$('meterFill').style.width='0%';status('尚未启用麦克风');}
+function dbFromBins(freq,widthHz=0){if(!analyser||!dbBins)return -110;const binHz=ctx.sampleRate/analyser.fftSize;const mid=Math.round(freq/binHz);const span=Math.max(2,Math.ceil(widthHz/binHz));let power=0;for(let i=Math.max(1,mid-span);i<=Math.min(dbBins.length-1,mid+span);i++){const d=dbBins[i];if(Number.isFinite(d))power+=Math.pow(10,d/10);}return power>0?10*Math.log10(power):-110;}
+function bandDb(freq){if(!analyser||!dbBins)return -110;const lo=freq/Math.pow(2,1/6),hi=freq*Math.pow(2,1/6),hz=ctx.sampleRate/analyser.fftSize;let p=0;for(let i=Math.max(1,Math.ceil(lo/hz));i<Math.min(dbBins.length,Math.ceil(hi/hz));i++)p+=Math.pow(10,dbBins[i]/10);return p>0?10*Math.log10(p):-110;}
+function levelTick(ts){rafId=requestAnimationFrame(levelTick);if(!analyser)return;analyser.getFloatTimeDomainData(timeBins);let sum=0;for(let i=0;i<timeBins.length;i+=16){const v=timeBins[i];sum+=v*v;}const rms=Math.sqrt(sum/(timeBins.length/16));inputDb=20*Math.log10(Math.max(1e-8,rms));$('inputLevel').textContent=inputDb.toFixed(1)+' dBFS';$('meterFill').style.width=clamp((inputDb+80)/80*100,0,100)+'%';if(mode==='rta'&&!rtaFrozen&&ts-lastRta>120){lastRta=ts;analyser.getFloatFrequencyData(dbBins);rtaData=FREQS.filter(f=>f>=40&&f<Math.min(16001,ctx.sampleRate*.45)).map(f=>({f,db:bandDb(f)}));let max=rtaData.reduce((a,b)=>b.db>a.db?b:a,{f:0,db:-110});$('rtaPeakFreq').textContent=fmtF(max.f)+' Hz';$('rtaPeakValue').textContent=max.db.toFixed(1)+' dBFS';draw();}}
+async function prepareOutput(){await ensureContext();if(signalMode)stopOutput();gain=ctx.createGain();gain.gain.value=0;gain.connect(ctx.destination);}
+function outputVolume(){return Number($('volume').value)/100;}
+function stopOutput(){if(gain&&ctx&&ctx.state!=='closed'){try{gain.gain.cancelScheduledValues(ctx.currentTime);gain.gain.setTargetAtTime(0,ctx.currentTime,.015);}catch{}}if(osc){try{osc.stop(ctx.currentTime+.09)}catch{}osc=null;}if(noiseSrc){try{noiseSrc.stop(ctx.currentTime+.09)}catch{}noiseSrc=null;}signalMode=null;$('playSignal').disabled=false;$('stopSignal').disabled=true;}
+function createPinkBuffer(){const b=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate);const a=b.getChannelData(0);let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;for(let i=0;i<a.length;i++){const white=Math.random()*2-1;b0=.99886*b0+white*.0555179;b1=.99332*b1+white*.0750759;b2=.969*b2+white*.153852;b3=.8665*b3+white*.3104856;b4=.55*b4+white*.5329522;b5=-.7616*b5-white*.016898;a[i]=(b0+b1+b2+b3+b4+b5+b6+white*.5362)*.10;b6=white*.115926;}return b;}
+async function startSignal(){if(measuring)return;try{await prepareOutput();if($('signalType').value==='pink'){noiseSrc=ctx.createBufferSource();noiseSrc.buffer=createPinkBuffer();noiseSrc.loop=true;noiseSrc.connect(gain);noiseSrc.start();signalMode='pink';}else{osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=Number($('toneFreq').value);osc.connect(gain);osc.start();signalMode='sine';}gain.gain.setTargetAtTime(outputVolume(),ctx.currentTime,.06);$('playSignal').disabled=true;$('stopSignal').disabled=false;}catch(e){stopOutput();alertText('播放失败：'+mediaError(e));}}
+function normalized(points){if(!points||!points.length)return [];const base=points.find(p=>p.f===1000);if(!base||!Number.isFinite(base.db))return [];return points.map(p=>({f:p.f,db:p.db-base.db,raw:p.db}));}
+function saveReference(){if(!measured||!measured.length){alertText('请先完成至少一次完整扫频，再保存参考曲线。');return;}try{reference=JSON.parse(JSON.stringify(measured));localStorage.setItem(STORAGE,JSON.stringify({v:1,points:reference,savedAt:new Date().toISOString()}));clearAlert();draw();}catch(e){alertText('无法写入浏览器本地存储：'+e.message);}}
+function loadReference(){try{const old=JSON.parse(localStorage.getItem(STORAGE)||'null');if(old?.v===1&&Array.isArray(old.points)&&old.points.every(p=>Number.isFinite(p.f)&&Number.isFinite(p.db))&&old.points.some(p=>p.f===1000))reference=old.points;}catch{}}
+function stopMeasurement(){cancelSweep=true;if(measuring){$('progressText').textContent='正在停止…';}stopOutput();}
+function stateSweep(on){measuring=on;$('startSweep').disabled=on;$('stopSweep').disabled=!on;$('micBtn').disabled=on;$('playSignal').disabled=on||Boolean(signalMode);$('rangeSelect').disabled=on;$('sweepSpeed').disabled=on;$('saveRef').disabled=on;}
+async function startSweep(){if(measuring)return;cancelSweep=false;const ok=await enableMic();if(!ok)return;clearAlert();stopOutput();stateSweep(true);
+const min=Number($('rangeSelect').value);const fs=FREQS.filter(f=>f>=min&&f<=Math.min(16000,ctx.sampleRate*.45));const careful=$('sweepSpeed').value==='careful';
+const settleMs=careful?570:340,samples=careful?9:6,interval=careful?73:55;
+$('pointCount').textContent='0 / '+fs.length;$('ref1k').textContent='—';$('progressText').textContent='开始测量';$('progressFill').style.width='0%';$('progressPercent').textContent='0%';measured=null;draw();
+let points=[];
+try{await prepareOutput();osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=fs[0];osc.connect(gain);osc.start();signalMode='sweep';gain.gain.setTargetAtTime(outputVolume(),ctx.currentTime,.07);await sleep(210);
+  for(let i=0;i<fs.length;i++){
+    if(cancelSweep)break;
+    const f=fs[i];osc.frequency.setTargetAtTime(f,ctx.currentTime,.012);
+    $('curFreq').textContent=fmtF(f)+' Hz';$('progressText').textContent='测量 '+fmtF(f)+' Hz · 保持安静';
+    await sleep(settleMs);if(cancelSweep)break;
+    const xs=[];for(let j=0;j<samples;j++){analyser.getFloatFrequencyData(dbBins);xs.push(dbFromBins(f));await sleep(interval);if(cancelSweep)break;}
+    if(cancelSweep)break;xs.sort((a,b)=>a-b);const d=xs[Math.floor(xs.length/2)];points.push({f,db:d});measured=points.slice();
+    const pct=Math.round((i+1)/fs.length*100);$('pointCount').textContent=(i+1)+' / '+fs.length;$('progressPercent').textContent=pct+'%';$('progressFill').style.width=pct+'%';if(f===1000)$('ref1k').textContent=d.toFixed(1)+' dBFS';draw();
+  }
+  if(cancelSweep){$('progressText').textContent='已停止（未完成的结果不会保存）';measured=null;draw();}
+  else{$('progressText').textContent='测量完成 · '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const low=points.filter(p=>p.db< -78).length;if(low)alertText('有 '+low+' 个频点电平低于 -78 dBFS，结果可能接近环境噪声底。');}
+}catch(e){measured=null;alertText('扫频中断：'+mediaError(e));$('progressText').textContent='测量失败';draw();}
+finally{stopOutput();stateSweep(false);$('csvBtn').disabled=!measured;}
+}
+function setMode(next){mode=next;$('sweepTab').classList.toggle('active',next==='sweep');$('rtaTab').classList.toggle('active',next==='rta');$('sweepTab').setAttribute('aria-selected',next==='sweep');$('rtaTab').setAttribute('aria-selected',next==='rta');$('sweepControls').classList.toggle('hide',next!=='sweep');$('rtaControls').classList.toggle('hide',next!=='rta');$('chartMode').textContent=next==='sweep'?'Δ dB / 1 kHz':'dBFS · 1/3 OCT';$('chartLegend').classList.toggle('hide',next==='rta');$('csvBtn').classList.toggle('hide',next==='rta');$('saveRef').disabled=measuring;draw();}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):(ctx.rect(x,y,w,h));ctx.fill();}
+function draw(){const canvas=$('plot');const rect=canvas.getBoundingClientRect();if(rect.width<1||rect.height<1)return;const dpr=Math.min(3,window.devicePixelRatio||1),w=rect.width,h=rect.height;const pixelW=Math.round(w*dpr),pixelH=Math.round(h*dpr);if(canvas.width!==pixelW||canvas.height!==pixelH){canvas.width=pixelW;canvas.height=pixelH;}const g=canvas.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+const L=w<460?43:54,T=17,R=17,B=37,pw=w-L-R,ph=h-T-B;const fMin=40,fMax=16000;const ymin=mode==='sweep'?-30:-100,ymax=mode==='sweep'?30:0;
+const fx=f=>L+clamp(Math.log(f/fMin)/Math.log(fMax/fMin),0,1)*pw;const fy=db=>T+(ymax-db)/(ymax-ymin)*ph;
+g.fillStyle='#0c1724';roundRect(g,L,T,pw,ph,7);
+const vertical=[40,63,100,200,500,1000,2000,4000,8000,16000];const horiz=mode==='sweep'?[-30,-20,-10,0,10,20,30]:[-100,-80,-60,-40,-20,0];g.font='11px -apple-system,BlinkMacSystemFont,sans-serif';g.textBaseline='middle';g.lineWidth=1;
+for(const y of horiz){const p=fy(y);g.beginPath();g.moveTo(L,p);g.lineTo(L+pw,p);g.strokeStyle=y===0&&mode==='sweep'?'#496176':C.grid;g.stroke();g.fillStyle=C.muted;g.textAlign='right';g.fillText(String(y),L-8,p);}
+for(const f of vertical){const x=fx(f);g.beginPath();g.moveTo(x,T);g.lineTo(x,T+ph);g.strokeStyle=C.grid;g.stroke();g.fillStyle=C.muted;g.textAlign='center';if(w<430&&[63,200,2000,16000].includes(f))continue;g.fillText(f>=1000?(f/1000)+'k':f,x,T+ph+19);}
+g.save();g.beginPath();g.rect(L,T,pw,ph);g.clip();
+function curve(rows,color,width=2,dash=[]){if(!rows||!rows.length)return;g.beginPath();g.lineWidth=width;g.strokeStyle=color;g.setLineDash(dash);g.lineJoin='round';let used=0;for(const p of rows){if(p.f<fMin||p.f>fMax||!Number.isFinite(p.db))continue;const x=fx(p.f),y=fy(clamp(p.db,ymin-20,ymax+20));if(!used++)g.moveTo(x,y);else g.lineTo(x,y);}if(used>1)g.stroke();if(used===1){g.arc(fx(rows[0].f),fy(clamp(rows[0].db,ymin,ymax)),3,0,Math.PI*2);g.fillStyle=color;g.fill();}g.setLineDash([]);}
+if(mode==='sweep'){
+ const cur=normalized(measured),ref=normalized(reference);curve(ref,C.purple,2,[5,5]);curve(cur,C.cyan,2.8);
+ if(cur.length&&ref.length){const map=new Map(ref.map(p=>[p.f,p.db]));curve(cur.filter(p=>map.has(p.f)).map(p=>({f:p.f,db:p.db-map.get(p.f)})),C.green,1.7,[2,4]);}
+ if(!cur.length&&!ref.length){g.fillStyle=C.muted;g.textAlign='center';g.font='12px -apple-system,sans-serif';g.fillText('点击「开始扫频」生成频响曲线',L+pw/2,T+ph/2);}
+}else{
+ const pts=rtaData;if(pts.length){const barW=Math.max(2,pw/(pts.length*1.4));for(const p of pts){const x=fx(p.f),y=clamp(fy(p.db),T,T+ph);g.fillStyle='rgba(101,219,232,.72)';g.fillRect(x-barW/2,y,barW,T+ph-y);}curve(pts,C.cyan,1.8);}else{g.fillStyle=C.muted;g.textAlign='center';g.font='12px -apple-system,sans-serif';g.fillText('启用麦克风后显示实时频谱',L+pw/2,T+ph/2);}
+}
+g.restore();g.fillStyle=C.muted;g.textAlign='left';g.font='11px -apple-system,sans-serif';g.fillText(mode==='sweep'?'相对电平 dB':'输入电平 dBFS',L+6,9);
+updateInsights();
+}
+function updateInsights(){const el=$('insights');if(mode==='rta'){el.innerHTML='';$('chartNotice').textContent='RTA 为未经声压校准的频段能量，纵轴为 dBFS，不能直接代表 dB SPL。';return;}const cur=normalized(measured);$('chartNotice').textContent=reference?'青色：本次；紫色：参考；绿色：两次差值。对比前请固定音量、机位与音频输出路径。':'扫频曲线以 1 kHz 为 0 dB 基准，只反映整条播放—空间—麦克风链路的相对频率特性。';if(cur.length<4){el.innerHTML='';return;}const lo=cur.reduce((a,b)=>b.db<a.db?b:a),hi=cur.reduce((a,b)=>b.db>a.db?b:a);el.replaceChildren();for(const [k,val,isOrange] of [['最低频点',fmtF(lo.f)+' Hz · '+lo.db.toFixed(1)+' dB',false],['最高频点',fmtF(hi.f)+' Hz · +'+hi.db.toFixed(1)+' dB',false],['峰谷差',(hi.db-lo.db).toFixed(1)+' dB',true]]){const chip=document.createElement('span');chip.className='chip'+(isOrange?' orange':'');chip.append(k+' ');const b=document.createElement('b');b.textContent=val;chip.append(b);el.append(chip);}}
+function download(name,blob){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function exportCSV(){if(!measured)return;const nm=normalized(measured),rf=new Map(normalized(reference).map(p=>[p.f,p.db]));const s=['frequency_hz,raw_dbfs,relative_db_at_1khz,reference_relative_db,delta_db'];for(let i=0;i<measured.length;i++){const p=measured[i],r=rf.get(p.f);s.push([p.f,p.db.toFixed(3),nm[i].db.toFixed(3),r===undefined?'':r.toFixed(3),r===undefined?'':(nm[i].db-r).toFixed(3)].join(','));}download('acoustic-lab-'+new Date().toISOString().slice(0,10)+'.csv',new Blob(['\ufeff'+s.join('\r\n')],{type:'text/csv;charset=utf-8'}));}
+function exportPNG(){draw();$('plot').toBlob(b=>{if(b)download('acoustic-lab-'+mode+'-'+new Date().toISOString().slice(0,10)+'.png',b);else alertText('无法生成图片。');},'image/png');}
+$('micBtn').addEventListener('click',()=>stream?closeMic():enableMic());$('startSweep').addEventListener('click',startSweep);$('stopSweep').addEventListener('click',stopMeasurement);$('saveRef').addEventListener('click',saveReference);$('clearRef').addEventListener('click',()=>{reference=null;try{localStorage.removeItem(STORAGE);}catch{}draw();});$('sweepTab').addEventListener('click',()=>setMode('sweep'));$('rtaTab').addEventListener('click',()=>setMode('rta'));$('freezeRta').addEventListener('click',()=>{rtaFrozen=!rtaFrozen;$('freezeRta').textContent=rtaFrozen?'继续实时显示':'冻结画面';$('rtaState').textContent=rtaFrozen?'画面已冻结':'实时更新中';});
+$('signalType').addEventListener('change',()=>{$('toneFreq').disabled=$('signalType').value!=='sine';if(signalMode)stopOutput();});$('toneFreq').addEventListener('change',()=>{if(signalMode==='sine'&&osc)osc.frequency.setTargetAtTime(Number($('toneFreq').value),ctx.currentTime,.02);});$('volume').addEventListener('input',()=>{$('volumeLabel').textContent=$('volume').value+'%';if(gain&&signalMode)gain.gain.setTargetAtTime(outputVolume(),ctx.currentTime,.035);});$('playSignal').addEventListener('click',startSignal);$('stopSignal').addEventListener('click',stopOutput);$('csvBtn').addEventListener('click',exportCSV);$('pngBtn').addEventListener('click',exportPNG);
+window.addEventListener('resize',draw);document.addEventListener('visibilitychange',()=>{if(document.hidden){if(measuring)stopMeasurement();if(signalMode)stopOutput();}});loadReference();draw();requestAnimationFrame(levelTick);
+})();
+</script>
+</body>
+</html>
